@@ -1,0 +1,153 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Booking Successful - MovieBook</title>
+    <link rel="stylesheet" href="/css/style.css">
+
+    <style>
+        .success-page {
+            min-height: calc(100vh - 80px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 60px 20px;
+        }
+
+        .success-card {
+            width: 100%;
+            max-width: 650px;
+            text-align: center;
+            padding: 60px 40px;
+            background: #ffffff;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #ed111c;
+            border-radius: 50%;
+            font-size: 40px;
+        }
+
+        .success-card h1 {
+            color: #1e1e2f;
+            font-size: 42px;
+            margin-bottom: 15px;
+        }
+
+        .success-card h1 span {
+            color: #ed111c;
+        }
+
+        .success-card p {
+            color: #5f6b7a;
+            font-size: 17px;
+            line-height: 1.7;
+            margin-bottom: 35px;
+        }
+
+        .success-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .success-buttons a {
+            text-decoration: none;
+            padding: 14px 28px;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        .home-btn {
+            background: #ed111c;
+            color: #1e1e2f;
+        }
+
+        .movies-btn {
+            border: 1px solid rgba(255,255,255,0.2);
+            color: #1e1e2f;
+        }
+
+        .success-buttons a:hover {
+            transform: translateY(-2px);
+        }
+
+        footer {
+            margin-top: 0;
+        }
+
+        @media (max-width: 600px) {
+
+            .success-card {
+                padding: 45px 20px;
+            }
+
+            .success-card h1 {
+                font-size: 32px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ================= NAVBAR ================= -->
+<div th:replace="~{navbar :: navbar}"></div>
+
+<!-- ================= SUCCESS PAGE ================= -->
+<section class="success-page">
+    <div class="success-card">
+
+        <!-- SUCCESS ICON -->
+        <div class="success-icon">
+            <i class="fa-solid fa-check" aria-hidden="true"></i>
+        </div>
+
+        <!-- TITLE -->
+        <h1>
+            Booking <span>Successful!</span>
+        </h1>
+
+        <!-- MESSAGE -->
+        <p>
+            Your movie ticket has been booked successfully.
+            <br>
+            Thank you for choosing MovieBook.
+            <br>
+            Enjoy your movie! <i class="fa-solid fa-film" aria-hidden="true"></i><i class="fa-solid fa-film" aria-hidden="true"></i>
+        </p>
+        <!-- BUTTONS -->
+        <div class="success-buttons">
+
+            <a href="/"
+               class="home-btn">
+                Back to Home <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+            </a>
+
+            <a href="/movies"
+               class="movies-btn">
+                Browse Movies
+            </a>
+        </div>
+    </div>
+</section>
+<!-- FOOTER -->
+<div th:replace="~{footer :: footer}"></div>
+</body>
+</html>
+
+
+

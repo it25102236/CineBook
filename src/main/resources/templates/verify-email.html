@@ -1,0 +1,557 @@
+﻿<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Verify Account - MovieBook</title>
+    <link rel="stylesheet" href="/css/style.css">
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #0b0b0b;
+            color: #1e1e2f;
+
+            min-height: 100vh;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .verify-container {
+            width: 420px;
+            background: #171717;
+
+            padding: 40px;
+
+            border-radius: 15px;
+
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.15);
+
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 30px;
+            font-weight: bold;
+
+            color: #e50914;
+
+            margin-bottom: 25px;
+        }
+
+        h1 {
+            font-size: 26px;
+            margin-bottom: 12px;
+        }
+
+        .description {
+            color: #5f6b7a;
+            font-size: 14px;
+            line-height: 1.6;
+
+            margin-bottom: 25px;
+        }
+
+        .code-input {
+            width: 100%;
+
+            padding: 15px;
+
+            background: #222;
+            border: 1px solid #e2e8f0;
+
+            border-radius: 8px;
+
+            color: #1e1e2f;
+
+            font-size: 22px;
+
+            text-align: center;
+
+            letter-spacing: 8px;
+
+            outline: none;
+        }
+
+        .code-input:focus {
+            border-color: #e50914;
+        }
+
+        .verify-button {
+            width: 100%;
+
+            margin-top: 20px;
+
+            padding: 14px;
+
+            border: none;
+            border-radius: 8px;
+
+            background: #e50914;
+
+            color: #1e1e2f;
+
+            font-size: 16px;
+            font-weight: bold;
+
+            cursor: pointer;
+        }
+
+        .verify-button:hover {
+            background: #b20710;
+        }
+
+        .error-message {
+            background: #3a1111;
+
+            border: 1px solid #e50914;
+
+            color: #ff6b6b;
+
+            padding: 12px;
+
+            border-radius: 8px;
+
+            margin-bottom: 20px;
+
+            font-size: 14px;
+        }
+
+        .notice-message {
+            background: #10241a;
+
+            border: 1px solid #2f9e63;
+
+            color: #7ee2a8;
+
+            padding: 12px;
+
+            border-radius: 8px;
+
+            margin-bottom: 20px;
+
+            font-size: 14px;
+
+            line-height: 1.5;
+        }
+
+        .email-info {
+            color: #ddd;
+
+            font-size: 14px;
+
+            margin-bottom: 20px;
+        }
+
+        .back-link {
+            display: inline-block;
+
+            margin-top: 20px;
+
+            color: #5f6b7a;
+
+            text-decoration: none;
+
+            font-size: 14px;
+        }
+
+        .back-link:hover {
+            color: #1e1e2f;
+        }
+
+        .secondary-button {
+            margin-top: 18px;
+            padding: 0;
+            border: 0;
+            background: none;
+            color: #e50914;
+            font: inherit;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .secondary-button:hover {
+            color: #ff4d55;
+        }
+
+        .secondary-button i {
+            margin-right: 6px;
+        }
+
+        /* ================= OTP COUNTDOWN ================= */
+
+        .otp-countdown {
+            margin-top: 18px;
+            margin-bottom: 8px;
+            padding: 12px 16px;
+            border: 1px solid #2a2a2a;
+            border-radius: 8px;
+            background: #0f172a;
+            color: #94a3b8;
+            font-size: 13px;
+            line-height: 1.5;
+            text-align: center;
+        }
+
+        .otp-countdown .otp-countdown-text {
+            font-weight: 600;
+        }
+
+        .resend-cooldown {
+            margin-left: 8px;
+            color: #fbbf24;
+            font-weight: 600;
+        }
+
+        .secondary-button:disabled {
+            opacity: 0.6;
+            cursor: wait;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+<div th:replace="~{navbar :: navbar}"></div>
+
+<div class="verify-container">
+
+    <div class="logo">
+        <i class="fa-solid fa-film" aria-hidden="true"></i> MovieBook
+    </div>
+
+
+    <h1>
+        Verify Your Account
+    </h1>
+
+
+    <p class="description">
+        We sent a 6-digit verification code to your
+        <span th:text="${verificationChannel}">email address</span>.
+    </p>
+
+
+    <!-- Error Message -->
+
+    <div th:if="${error}"
+         class="error-message"
+         th:text="${error}">
+        Invalid verification code.
+    </div>
+
+
+    <!-- Notice: the email is already registered (account reuse) -->
+
+    <div th:if="${reuseNotice}"
+         class="notice-message"
+         th:text="${reuseNotice}">
+        This email is already registered.
+    </div>
+
+
+    <!-- Notice: a new code was just resent -->
+
+    <div th:if="${param.resent}"
+         class="notice-message">
+        A new verification code has been sent. Please enter the latest code below.
+    </div>
+
+
+    <form th:action="@{/verify-email}"
+          method="post">
+
+
+        <input
+                type="text"
+                name="code"
+                class="code-input"
+                placeholder="000000"
+                maxlength="6"
+                pattern="[0-9]{6}"
+                inputmode="numeric"
+                required
+                autocomplete="one-time-code">
+
+
+        <button
+                type="submit"
+                class="verify-button">
+
+                Verify Code <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+
+        </button>
+
+    </form>
+
+
+    <!-- OTP expiry countdown + Resend OTP with a cooldown timer -->
+
+    <!-- Shows how long the current code stays valid and locks the resend
+         button until the cooldown elapses. Driven by verificationExpiry
+         which UserController exposes from the session. -->
+
+    <div id="otpExpiryCountdown"
+         class="otp-countdown">
+
+        <span id="otpCountdownText"
+              class="otp-countdown-text">
+            This verification code will expire in 10:00.
+        </span>
+
+    </div>
+
+
+    <form th:action="@{/verify-email/resend}"
+          method="post">
+
+        <button type="submit"
+                id="resendOtpButton"
+                class="secondary-button">
+
+            <i class="fa-solid fa-rotate-right"
+               aria-hidden="true"></i> Resend OTP
+            <span id="resendCooldown"
+                  class="resend-cooldown"
+                  hidden>
+                (Resend in <span id="resendSeconds">60</span>s)
+            </span>
+
+        </button>
+
+    </form>
+
+
+    <form th:if="${verificationChannel == 'email address'}"
+          th:action="@{/verify-email/use-phone}"
+          method="post">
+        <button type="submit" class="secondary-button">
+            Didn't receive the email? Send the code to your phone.
+        </button>
+    </form>
+
+
+    <a href="/signup"
+       class="back-link">
+
+        <i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Back to Sign Up
+
+    </a>
+
+</div>
+
+<div th:replace="~{footer :: footer}"></div>
+
+
+<!-- ================= OTP COUNTDOWN TIMER + RESEND COOLDOWN ================= -->
+
+<script th:inline="javascript">
+
+    /*<![CDATA[*/
+
+    // Absolute epoch-ms moment the current OTP stops being valid.
+    // Served by UserController from the session so the page can count
+    // down to expiry and keep the Resend OTP button locked meanwhile.
+    const otpExpiryTimestamp =
+        /*[[${verificationExpiry}]]*/ 0;
+
+    // Seconds the Resend OTP button stays locked after a code is issued.
+    const RESEND_COOLDOWN_SECONDS = 60;
+
+
+    function padTwo(value) {
+
+        return String(value).padStart(2, "0");
+
+    }
+
+
+    // ================= OTP VALIDITY COUNTDOWN =================
+    // Refreshes the "expires in MM:SS" text every second and, once the
+    // code has expired, reveals the Resend OTP button so a new code can
+    // be requested.
+
+    function updateOtpExpiry() {
+
+        const textElement =
+            document.getElementById("otpCountdownText");
+
+        if (!textElement) {
+
+            return;
+
+        }
+
+        if (!otpExpiryTimestamp) {
+
+            textElement.textContent = "";
+            return;
+
+        }
+
+        const remaining =
+            otpExpiryTimestamp - Date.now();
+
+        if (remaining <= 0) {
+
+            textElement.textContent =
+                "This verification code has expired. "
+                + "Use Resend OTP to get a new code.";
+
+            enableResend();
+            return;
+
+        }
+
+        const minutes =
+            Math.floor(remaining / (1000 * 60));
+
+        const seconds =
+            Math.floor((remaining % (1000 * 60)) / 1000);
+
+        textElement.textContent =
+            "This verification code will expire in "
+            + padTwo(minutes) + ":" + padTwo(seconds) + ".";
+
+    }
+
+
+    // ================= RESEND BUTTON COOLDOWN =================
+    // After a code is issued the submit button is disabled for a short
+    // window and shows "Resend in Xs", then becomes usable again.
+
+    const resendButton =
+        document.getElementById("resendOtpButton");
+
+    const resendCooldownSpan =
+        document.getElementById("resendCooldown");
+
+    const resendSecondsSpan =
+        document.getElementById("resendSeconds");
+
+    let resendSecondsRemaining = RESEND_COOLDOWN_SECONDS;
+    let resendTimer = null;
+
+
+    function enableResend() {
+
+        if (resendButton) {
+
+            resendButton.disabled = false;
+
+        }
+
+        if (resendCooldownSpan) {
+
+            resendCooldownSpan.hidden = true;
+
+        }
+
+        if (resendTimer) {
+
+            clearInterval(resendTimer);
+            resendTimer = null;
+
+        }
+
+    }
+
+
+    function startResendCooldown() {
+
+        if (!resendButton
+                || !resendCooldownSpan
+                || !resendSecondsSpan) {
+
+            return;
+
+        }
+
+        resendSecondsRemaining = RESEND_COOLDOWN_SECONDS;
+
+        resendButton.disabled = true;
+        resendCooldownSpan.hidden = false;
+
+        if (resendTimer) {
+
+            clearInterval(resendTimer);
+
+        }
+
+        resendTimer = setInterval(function () {
+
+            resendSecondsRemaining--;
+
+            if (resendSecondsRemaining > 0) {
+
+                resendSecondsSpan.textContent =
+                    resendSecondsRemaining;
+
+            } else {
+
+                enableResend();
+
+            }
+
+        }, 1000);
+
+    }
+
+
+    // ================= COUNTDOWN ORCHESTRATION =================
+
+    function startOtpCountdown() {
+
+        updateOtpExpiry();
+
+        setInterval(
+            updateOtpExpiry,
+            1000
+        );
+
+        startResendCooldown();
+
+    }
+
+
+    if (document.readyState === "loading") {
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            startOtpCountdown
+        );
+
+    } else {
+
+        startOtpCountdown();
+
+    }
+
+    /*]]>*/
+
+</script>
+
+</body>
+
+</html>
+
+
+
+

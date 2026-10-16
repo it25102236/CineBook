@@ -1,0 +1,308 @@
+﻿<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>Edit Theatre - Admin</title>
+    <link rel="stylesheet" href="/css/style.css">
+
+    <style>
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6fb;
+            color: #1e1e2f;
+        }
+
+        .container {
+            width: 550px;
+            max-width: 90%;
+            margin: 50px auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: #e50914;
+            margin-bottom: 30px;
+        }
+
+        .form-box {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 30px;
+        }
+
+        .field {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            color: #5f6b7a;
+            margin-bottom: 8px;
+        }
+
+        input {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 12px;
+            background: #ffffff;
+            color: #1e1e2f;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #e50914;
+        }
+
+        input.error {
+            border-color: #e50914;
+        }
+
+        .error-msg {
+            color: #ff6b6b;
+            font-size: 13px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .error-msg.visible {
+            display: block;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 13px;
+            background: #ed0712;
+            color: #1e1e2f;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .submit-btn:hover {
+            background: #b8050e;
+        }
+
+        .back {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: #5f6b7a;
+            text-decoration: none;
+        }
+
+        .back:hover {
+            color: #1e1e2f;
+        }
+
+    </style>
+
+</head>
+
+<body>
+<div th:replace="~{navbar :: navbar}"></div>
+
+<div class="container">
+
+    <h1><i class="fa-solid fa-pen-to-square" aria-hidden="true"></i> Edit Theatre</h1>
+
+    <div class="form-box">
+
+        <p th:if="${error}"
+           th:text="${error}"
+           style="color:#ff6b6b; margin-top:0;"></p>
+
+        <form action="/admin/theatres/edit"
+              method="post"
+              id="theatreForm"
+              novalidate>
+
+
+            <!-- THEATRE ID -->
+
+            <input type="hidden"
+                   name="id"
+                   th:value="${theatre.id}">
+
+
+            <!-- THEATRE NAME -->
+
+            <div class="field">
+
+                <label>
+                    Theatre Name
+                </label>
+
+                <input type="text"
+                       name="name"
+                       th:value="${theatre.name}"
+                       placeholder="Enter theatre name"
+                       required
+                       pattern="^[a-zA-Z0-9\s\-'.&]+$"
+                       title="Only letters, numbers, spaces, hyphens, apostrophes, periods, and & are allowed."
+                       minlength="2"
+                       maxlength="100">
+                <span class="error-msg" data-for="name">Theatre name contains invalid characters. Only letters, numbers, spaces, hyphens, apostrophes, periods, and & are allowed.</span>
+
+            </div>
+
+
+            <!-- LOCATION -->
+
+            <div class="field">
+
+                <label>
+                    Location
+                </label>
+
+                <input type="text"
+                       name="location"
+                       th:value="${theatre.location}"
+                       placeholder="Enter theatre location"
+                       required
+                       minlength="2"
+                       maxlength="200">
+                <span class="error-msg" data-for="location">Location must be between 2 and 200 characters.</span>
+
+            </div>
+
+
+            <!-- TOTAL SEATS -->
+
+            <div class="field">
+
+                <label>
+                    Total Seats
+                </label>
+
+                <input type="number"
+                       name="totalSeats"
+                       min="1"
+                       max="500"
+                       step="1"
+                       th:value="${theatre.totalSeats}"
+                       placeholder="Example: 150"
+                       required>
+                <span class="error-msg" data-for="totalSeats">Total seats must be a whole number between 1 and 500.</span>
+
+            </div>
+
+
+            <!-- UPDATE -->
+
+            <button type="submit"
+                    class="submit-btn">
+
+                <i class="fa-solid fa-floppy-disk" aria-hidden="true"></i> Update Theatre
+
+            </button>
+
+        </form>
+
+
+        <a href="/admin/theatres"
+           class="back">
+
+            <i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Back to Theatre Management
+
+        </a>
+
+    </div>
+
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('theatreForm');
+    const inputs = form.querySelectorAll('input[required]');
+    
+    function validateInput(input) {
+        const errorMsg = form.querySelector('.error-msg[data-for="' + input.name + '"]');
+        let isValid = true;
+        
+        // Required check
+        if (!input.value.trim()) {
+            isValid = false;
+        }
+        
+        // Pattern check
+        if (input.hasAttribute('pattern') && !new RegExp(input.pattern).test(input.value.trim())) {
+            isValid = false;
+        }
+        
+        // Minlength/maxlength
+        if (input.hasAttribute('minlength') && input.value.trim().length < parseInt(input.getAttribute('minlength'))) {
+            isValid = false;
+        }
+        if (input.hasAttribute('maxlength') && input.value.trim().length > parseInt(input.getAttribute('maxlength'))) {
+            isValid = false;
+        }
+        
+        // Min/max for number
+        if (input.type === 'number') {
+            const val = parseInt(input.value);
+            if (isNaN(val) || val < 1 || val > 500 || !Number.isInteger(val)) {
+                isValid = false;
+            }
+        }
+        
+        // Update UI
+        if (isValid) {
+            input.classList.remove('error');
+            if (errorMsg) errorMsg.classList.remove('visible');
+        } else {
+            input.classList.add('error');
+            if (errorMsg) errorMsg.classList.add('visible');
+        }
+        
+        return isValid;
+    }
+    
+    // Validate on blur
+    inputs.forEach(function(input) {
+        input.addEventListener('blur', function() {
+            validateInput(this);
+        });
+        
+        input.addEventListener('input', function() {
+            if (this.classList.contains('error')) {
+                validateInput(this);
+            }
+        });
+    });
+    
+    // Validate on submit
+    form.addEventListener('submit', function(e) {
+        let allValid = true;
+        inputs.forEach(function(input) {
+            if (!validateInput(input)) {
+                allValid = false;
+            }
+        });
+        if (!allValid) {
+            e.preventDefault();
+            // Focus first invalid
+            const firstError = form.querySelector('input.error');
+            if (firstError) firstError.focus();
+        }
+    });
+});
+</script>
+
+<div th:replace="~{footer :: footer}"></div>
+</body>
+
+</html>
+
+
+
+

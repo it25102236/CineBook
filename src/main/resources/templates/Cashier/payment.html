@@ -1,0 +1,354 @@
+﻿<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>Cashier Payment</title>
+    <link rel="stylesheet" href="/css/style.css">
+
+    <style>
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6fb;
+            color: #1e1e2f;
+        }
+
+        .container {
+            width: 550px;
+            max-width: 90%;
+            margin: 50px auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: #e50914;
+            margin-bottom: 30px;
+        }
+
+        .payment-box {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 30px;
+        }
+
+        .field {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            color: #5f6b7a;
+            margin-bottom: 8px;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 12px;
+            background: #ffffff;
+            color: #1e1e2f;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+        }
+
+        input[readonly] {
+            background: #222;
+            color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .methods {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .method {
+            flex: 1;
+            min-width: 120px;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 7px;
+            padding: 14px;
+            text-align: center;
+        }
+
+        .method input {
+            margin-right: 5px;
+        }
+
+        .amount {
+            background: #102b18;
+            border: 1px solid #22c55e;
+            color: #22c55e;
+            padding: 15px;
+            border-radius: 7px;
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .pay-btn {
+            width: 100%;
+            padding: 14px;
+            background: #e50914;
+            color: #1e1e2f;
+            border: none;
+            border-radius: 7px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .pay-btn:hover {
+            opacity: 0.85;
+        }
+
+        select {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 12px;
+            background: #ffffff;
+            color: #1e1e2f;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #2563eb;
+        }
+
+        .error-message {
+            background: #3a1010;
+            border: 1px solid #e50914;
+            color: #ff6b6b;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .back {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: #5f6b7a;
+            text-decoration: none;
+        }
+
+        .back:hover {
+            color: #1e1e2f;
+        }
+
+    </style>
+
+</head>
+
+<body>
+<div th:replace="~{navbar :: navbar}"></div>
+
+<div class="container">
+
+    <h1><i class="fa-solid fa-credit-card" aria-hidden="true"></i> Process Payment</h1>
+
+    <div class="payment-box">
+
+        <!-- ERROR MESSAGE -->
+
+        <div th:if="${error}"
+             class="error-message"
+             th:text="${error}">
+            Error
+        </div>
+
+        <!-- NO PAYABLE BOOKINGS -->
+
+        <div th:if="${error == null and booking == null and #lists.isEmpty(payableBookings)}"
+             class="error-message">
+            There are no bookings awaiting payment.
+            Create a booking first, or wait for a seat lock from a customer.
+        </div>
+
+        <!-- PICK A BOOKING -->
+
+        <div th:if="${error == null and booking == null and !#lists.isEmpty(payableBookings)}">
+
+            <div class="field">
+
+                <label for="bookingPicker">
+                    Booking ID
+                </label>
+
+                <select id="bookingPicker"
+                        onchange="if (this.value) { window.location.href='/cashier/payment?bookingId=' + this.value; }">
+
+                    <option value="">
+                        Select a booking to pay for
+                    </option>
+
+                    <option th:each="option : ${payableBookings}"
+                            th:value="${option.id}"
+                            th:text="'#' + ${option.id} + ' - ' + ${option.movieTitle} + ' (' + ${option.theatre} + ', ' + ${option.date} + ' ' + ${option.showTime} + ', ' + ${option.seatNumber} + ', LKR ' + ${option.price} + ')'">
+                    </option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+        <form th:if="${error == null and booking != null}"
+              action="/cashier/payment"
+              method="post">
+
+
+            <!-- BOOKING ID -->
+
+            <div class="field">
+
+                <label for="bookingSelect">
+                    Booking ID
+                </label>
+
+                <select id="bookingSelect"
+                        name="bookingId"
+                        onchange="window.location.href='/cashier/payment?bookingId=' + this.value;"
+                        required>
+
+                    <option th:each="option : ${payableBookings}"
+                            th:value="${option.id}"
+                            th:text="'#' + ${option.id} + ' - ' + ${option.movieTitle} + ' (' + ${option.theatre} + ', ' + ${option.date} + ' ' + ${option.showTime} + ', ' + ${option.seatNumber} + ')'"
+                            th:selected="${option.id == booking.id}">
+                    </option>
+
+                </select>
+
+                <input type="hidden"
+                       name="bookingId"
+                       th:value="${booking.id}">
+
+            </div>
+
+
+            <!-- AMOUNT -->
+
+            <div class="field">
+
+                <label for="amount">
+                    Amount
+                </label>
+
+                <input type="number"
+                       id="amount"
+                       min="0.01"
+                       step="0.01"
+                       th:value="${amount}"
+                       readonly>
+
+                <p style="color:#5f6b7a; font-size:13px; margin:6px 0 0 0;">
+                    The amount is taken from booking #<span th:text="${booking.id}">1</span>
+                    and cannot be changed here.
+                </p>
+
+            </div>
+
+
+            <!-- DISPLAY TOTAL -->
+
+            <div class="amount">
+
+                Total Amount:
+                Rs.
+                <span th:text="${#numbers.formatDecimal(amount, 1, 2)}">
+                </span>
+
+            </div>
+
+
+            <!-- PAYMENT METHOD -->
+
+            <div class="field">
+
+                <label>
+                    Payment Method
+                </label>
+
+                <div class="methods">
+
+                    <label class="method">
+
+                        <input type="radio"
+                               name="paymentMethod"
+                               value="CASH"
+                               required>
+
+                        <i class="fa-solid fa-money-bill-wave" aria-hidden="true"></i> Cash
+
+                    </label>
+
+
+                    <label class="method">
+
+                        <input type="radio"
+                               name="paymentMethod"
+                               value="CARD">
+
+                        <i class="fa-solid fa-credit-card" aria-hidden="true"></i> Card
+
+                    </label>
+
+
+                    <label class="method">
+
+                        <input type="radio"
+                               name="paymentMethod"
+                               value="ONLINE">
+
+                        <i class="fa-solid fa-globe" aria-hidden="true"></i> Online
+
+                    </label>
+
+                </div>
+
+            </div>
+
+
+            <!-- PAY BUTTON -->
+
+            <button type="submit"
+                    class="pay-btn">
+
+                Pay Now
+
+            </button>
+
+        </form>
+
+
+        <a href="/cashier"
+           class="back">
+
+            <i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Back to Cashier Dashboard
+
+        </a>
+
+    </div>
+
+</div>
+
+<div th:replace="~{footer :: footer}"></div>
+</body>
+
+</html>
+
+
+
+

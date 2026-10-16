@@ -1,0 +1,245 @@
+﻿<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>Edit User - Admin</title>
+    <link rel="stylesheet" href="/css/style.css">
+
+    <style>
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6fb;
+            color: #1e1e2f;
+        }
+
+        .container {
+            width: 500px;
+            max-width: 90%;
+            margin: 50px auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: #e50914;
+            margin-bottom: 30px;
+        }
+
+        .form-box {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 30px;
+        }
+
+        .field {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            color: #5f6b7a;
+            margin-bottom: 8px;
+        }
+
+        input,
+        select {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 12px;
+            background: #ffffff;
+            color: #1e1e2f;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #e50914;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 13px;
+            background: #ed0712;
+            color: #1e1e2f;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .submit-btn:hover {
+            background: #b8050e;
+        }
+
+        .back {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: #5f6b7a;
+            text-decoration: none;
+        }
+
+        .back:hover {
+            color: #1e1e2f;
+        }
+
+    </style>
+
+</head>
+
+<body>
+<div th:replace="~{navbar :: navbar}"></div>
+
+<div class="container">
+
+    <h1><i class="fa-solid fa-pen-to-square" aria-hidden="true"></i> Edit User</h1>
+
+    <div class="form-box">
+
+        <form action="/admin/users/edit"
+              method="post">
+
+
+            <!-- USER ID -->
+
+            <input type="hidden"
+                   name="id"
+                   th:value="${user.id}">
+
+
+            <!-- NAME -->
+
+            <div class="field">
+
+                <label>
+                    Name
+                </label>
+
+                <input type="text"
+                       name="name"
+                       th:value="${user.name}"
+                       placeholder="Enter user name"
+                       required>
+
+            </div>
+
+
+            <!-- EMAIL -->
+
+            <div class="field">
+
+                <label>
+                    Email
+                </label>
+
+                <input type="email"
+                       name="email"
+                       th:value="${user.email}"
+                       placeholder="Enter email"
+                       required>
+
+            </div>
+
+
+            <!-- ROLE -->
+
+            <div class="field">
+
+                <label>
+                    Role
+                </label>
+
+                <select name="role"
+                        required>
+
+                    <option value="CUSTOMER"
+                            th:selected="${user.role == 'CUSTOMER'}">
+
+                        Customer
+
+                    </option>
+
+                    <option value="CASHIER"
+                            th:selected="${user.role == 'CASHIER'}">
+
+                        Cashier
+
+                    </option>
+
+                    <option value="ADMIN"
+                            th:selected="${user.role == 'ADMIN'}">
+
+                        Admin
+
+                    </option>
+
+                    <option value="THEATRE_MANAGER"
+                            th:selected="${user.role == 'THEATRE_MANAGER'}">
+
+                        Theatre Manager
+
+                    </option>
+
+                    <option value="SUPPORT"
+                            th:selected="${user.role == 'SUPPORT'}">
+
+                        Support
+
+                    </option>
+
+                    <option value="MARKETING"
+                            th:selected="${user.role == 'MARKETING'}">
+
+                        Marketing
+
+                    </option>
+
+                    <option value="OWNER"
+                            th:selected="${user.role == 'OWNER'}">
+
+                        Owner
+
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <button type="submit"
+                    class="submit-btn">
+
+                <i class="fa-solid fa-floppy-disk" aria-hidden="true"></i> Update User
+
+            </button>
+
+        </form>
+
+
+        <a href="/admin/users"
+           class="back">
+
+            <i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Back to Users
+
+        </a>
+
+    </div>
+
+</div>
+
+<div th:replace="~{footer :: footer}"></div>
+</body>
+
+</html>
+
+
+
+

@@ -1,0 +1,79 @@
+# Maven
+target/
+mvnw.cmd
+.mvn/wrapper/maven-wrapper.properties
+
+# Java
+*.class
+*.jar
+*.war
+*.ear
+hs_err_pid*
+*.hprof
+*.jfr
+
+# Spring Boot
+spring-boot-*.properties
+application-*.properties
+application.properties
+
+# IDE
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+*.swp
+*.swo
+*~
+
+# Eclipse
+.project
+.classpath
+.settings/
+bin/
+build/
+*.tmp
+*.temp
+
+# Logs
+*.log
+logs/
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Database
+*.sql
+database/backups/
+database/dumps/
+
+# Testing
+target/
+surefire-reports/
+failsafe-reports/
+*.txt
+*.log
+
+# Build artifacts
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.rar
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.swp
+
+# Git
+.git/

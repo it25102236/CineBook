@@ -1,0 +1,345 @@
+﻿<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>Movie Ticket</title>
+    <link rel="stylesheet" href="/css/style.css">
+
+    <style>
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6fb;
+            color: #1e1e2f;
+        }
+
+        .container {
+            width: 600px;
+            max-width: 90%;
+            margin: 50px auto;
+        }
+
+        .success {
+            text-align: center;
+            color: #22c55e;
+            margin-bottom: 25px;
+        }
+
+        .success h1 {
+            margin-bottom: 8px;
+        }
+
+        .ticket {
+            background: #ffffff;
+            border: 2px solid #e50914;
+            border-radius: 12px;
+            padding: 30px;
+        }
+
+        .ticket h2 {
+            text-align: center;
+            color: #e50914;
+            margin-bottom: 25px;
+        }
+
+        .row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .label {
+            color: #5f6b7a;
+        }
+
+        .value {
+            font-weight: bold;
+            text-align: right;
+        }
+
+        .confirmed {
+            color: #22c55e;
+        }
+
+        .buttons {
+            text-align: center;
+            margin-top: 25px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 20px;
+            margin: 5px;
+            border-radius: 6px;
+            text-decoration: none;
+            color: #1e1e2f;
+            background: #e50914;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .btn.secondary {
+            background: #333;
+        }
+
+        .btn:hover {
+            opacity: 0.85;
+        }
+
+        @media print {
+
+            body {
+                background: white;
+                color: black;
+            }
+
+            .buttons {
+                display: none;
+            }
+
+            .ticket {
+                border: 2px solid black;
+                color: black;
+            }
+
+            .label {
+                color: #555;
+            }
+
+            .confirmed {
+                color: green;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+<div th:replace="~{navbar :: navbar}"></div>
+
+<div class="container">
+
+    <!-- SUCCESS MESSAGE -->
+
+    <div class="success">
+
+        <h1><i class="fa-solid fa-check" aria-hidden="true"></i> Payment Successful</h1>
+
+        <p>
+            Your movie ticket has been confirmed.
+        </p>
+
+    </div>
+
+
+    <!-- TICKET -->
+
+    <div class="ticket">
+
+        <h2><i class="fa-solid fa-film" aria-hidden="true"></i> MOVIE TICKET</h2>
+
+
+        <!-- BOOKING ID -->
+
+        <div class="row">
+
+            <span class="label">
+                Booking ID
+            </span>
+
+            <span class="value"
+                  th:text="${booking.id}">
+            </span>
+
+        </div>
+
+
+        <!-- MOVIE -->
+
+        <div class="row">
+
+            <span class="label">
+                Movie
+            </span>
+
+            <span class="value"
+                  th:text="${booking.movieTitle}">
+            </span>
+
+        </div>
+
+
+        <!-- THEATRE -->
+
+        <div class="row">
+
+            <span class="label">
+                Theatre
+            </span>
+
+            <span class="value"
+                  th:text="${booking.theatre}">
+            </span>
+
+        </div>
+
+
+        <!-- DATE -->
+
+        <div class="row">
+
+            <span class="label">
+                Date
+            </span>
+
+            <span class="value"
+                  th:text="${booking.date}">
+            </span>
+
+        </div>
+
+
+        <!-- SHOW TIME -->
+
+        <div class="row">
+
+            <span class="label">
+                Show Time
+            </span>
+
+            <span class="value"
+                  th:text="${booking.showTime}">
+            </span>
+
+        </div>
+
+
+        <!-- SEAT -->
+
+        <div class="row">
+
+            <span class="label">
+                Seat
+            </span>
+
+            <span class="value"
+                  th:text="${booking.seatNumber}">
+            </span>
+
+        </div>
+
+
+        <!-- AMOUNT -->
+
+        <div class="row">
+
+            <span class="label">
+                Amount
+            </span>
+
+            <span class="value">
+
+                Rs.
+                <span th:text="${payment.amount}">
+                </span>
+
+            </span>
+
+        </div>
+
+
+        <!-- PAYMENT METHOD -->
+
+        <div class="row">
+
+            <span class="label">
+                Payment Method
+            </span>
+
+            <span class="value"
+                  th:text="${payment.paymentMethod}">
+            </span>
+
+        </div>
+
+
+        <!-- PAYMENT STATUS -->
+
+        <div class="row">
+
+            <span class="label">
+                Payment Status
+            </span>
+
+            <span class="value confirmed"
+                  th:text="${payment.status}">
+            </span>
+
+        </div>
+
+
+        <!-- TICKET STATUS -->
+
+        <div class="row">
+
+            <span class="label">
+                Ticket Status
+            </span>
+
+            <span class="value confirmed">
+                CONFIRMED
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <!-- BUTTONS -->
+
+    <div class="buttons">
+
+        <button class="btn"
+                onclick="window.print()">
+
+            <i class="fa-solid fa-print" aria-hidden="true"></i> Print Ticket
+
+        </button>
+
+
+        <a href="/cashier"
+           class="btn secondary">
+
+            Dashboard
+
+        </a>
+
+
+        <a href="/cashier/transactions"
+           class="btn secondary">
+
+            Transactions
+
+        </a>
+
+    </div>
+
+</div>
+
+<div th:replace="~{footer :: footer}"></div>
+</body>
+
+</html>
+
+
+
+

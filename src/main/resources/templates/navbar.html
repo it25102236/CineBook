@@ -1,0 +1,57 @@
+﻿<nav class="navbar" th:fragment="navbar" xmlns:th="http://www.thymeleaf.org">
+	<div class="logo">
+		<i class="fa-solid fa-film" aria-hidden="true"></i> <span>Movie</span>Book
+	</div>
+
+	<div class="nav-links">
+		<a href="/">Home</a>
+		<a href="/movies">Movies</a>
+		<a href="/booking">Book Movie</a>
+		<a th:if="${session.loggedInUser != null and session.loggedInUser.role != null and #strings.toUpperCase(session.loggedInUser.role) == 'CUSTOMER'}" href="/my-bookings">My Bookings</a>
+		<a th:if="${session.loggedInUser != null and session.loggedInUser.role != null and #strings.toUpperCase(session.loggedInUser.role) == 'CUSTOMER'}" href="/contact-support">Contact Support</a>
+	</div>
+
+	<div class="nav-actions" th:if="${session.loggedInUser == null}">
+		<a href="/login" class="login-btn">Login</a>
+		<a href="/signup" class="signup-btn">Sign Up</a>
+	</div>
+
+	<div class="nav-actions" th:if="${session.loggedInUser != null}">
+		<details class="notif-wrapper">
+			<summary class="notif-bell">
+				<i class="fa-solid fa-bell" aria-hidden="true"></i>
+				<span class="notif-dot" th:if="${unreadNotificationCount > 0}"></span>
+			</summary>
+			<div class="notif-panel">
+				<div class="notif-title">Notifications</div>
+				<form th:if="${unreadNotificationCount > 0}" method="post" action="/notifications/read-all" class="notif-mark-all">
+					<button type="submit">Mark all as read</button>
+				</form>
+				<a class="notif-item"
+				   th:each="notification : ${userNotifications}"
+				   th:href="@{/notifications/read(id=${notification.id})}"
+				   th:classappend="${notification.read ? '' : ' notif-unread'}">
+					<strong th:text="${notification.title}">Booking update</strong><br>
+					<span th:text="${notification.message}">Notification details</span>
+					<span class="notif-unread-dot" th:if="${not notification.read}"></span>
+				</a>
+				<div class="notif-item" th:if="${#lists.isEmpty(userNotifications)}">No new notifications.</div>
+			</div>
+		</details>
+
+		<span class="welcome-user">
+			Hi 👋 <strong th:text="${session.userName}">User</strong> -
+			<span th:text="${session.loggedInUser != null ? #strings.toUpperCase(session.loggedInUser.role) : ''}">Role</span>
+		</span>
+
+		<a th:if="${session.loggedInUser.role != null and #strings.toUpperCase(session.loggedInUser.role) == 'ADMIN'}" href="/admin" class="dashboard-link">Dashboard</a>
+		<a th:if="${session.loggedInUser.role != null and #strings.toUpperCase(session.loggedInUser.role) == 'CASHIER'}" href="/cashier" class="dashboard-link">Dashboard</a>
+		<a th:if="${session.loggedInUser.role != null and #strings.toUpperCase(session.loggedInUser.role) == 'THEATRE_MANAGER'}" href="/theatre-manager" class="dashboard-link">Dashboard</a>
+		<a th:if="${session.loggedInUser.role != null and #strings.toUpperCase(session.loggedInUser.role) == 'OWNER'}" href="/owner" class="dashboard-link">Dashboard</a>
+		<a th:if="${session.loggedInUser.role != null and #strings.toUpperCase(session.loggedInUser.role) == 'SUPPORT'}" href="/support" class="dashboard-link">Dashboard</a>
+		<a th:if="${session.loggedInUser.role != null and #strings.toUpperCase(session.loggedInUser.role) == 'MARKETING'}" href="/marketing" class="dashboard-link">Dashboard</a>
+
+		<a href="/logout" class="logout-btn">Logout</a>
+	</div>
+</nav>
+

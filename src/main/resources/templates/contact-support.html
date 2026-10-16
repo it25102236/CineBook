@@ -1,0 +1,325 @@
+﻿<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+    <title>Contact Support - MovieBook</title>
+
+    <link rel="stylesheet"
+          th:href="@{/css/style.css}">
+
+    <style>
+
+        .form-page {
+            min-height: calc(100vh - 80px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 60px 20px;
+            background: #ffffff;
+        }
+
+        .support-card {
+            width: 100%;
+            max-width: 560px;
+            padding: 45px;
+            background: #ffffff;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 18px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.45);
+        }
+
+        .support-card h1 {
+            color: #1e1e2f;
+            font-size: 30px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .support-card p.intro {
+            color: #9999a2;
+            font-size: 14px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .field {
+            margin-bottom: 20px;
+        }
+
+        .field label {
+            display: block;
+            color: #d8d8df;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .field input,
+        .field textarea {
+            width: 100%;
+            padding: 13px 15px;
+            box-sizing: border-box;
+            background: #ffffff;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            color: #1e1e2f;
+            outline: none;
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        .field textarea {
+            min-height: 130px;
+            resize: vertical;
+        }
+
+        .field input:focus,
+        .field textarea:focus {
+            border-color: #ed111c;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 14px;
+            margin-top: 10px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 14px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 800;
+            font-size: 14px;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: #ed111c;
+            color: #1e1e2f;
+        }
+
+        .btn-primary:hover {
+            background: #ff1c27;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid #35353d;
+            color: #1e1e2f;
+        }
+
+        .btn-secondary:hover {
+            border-color: #ed111c;
+            color: #ed111c;
+        }
+
+        .field select {
+            width: 100%;
+            padding: 13px 15px;
+            box-sizing: border-box;
+            background: #ffffff;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            color: #1e1e2f;
+            outline: none;
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        .field input[type="file"] {
+            width: 100%;
+            padding: 10px 0;
+            font-size: 14px;
+            color: #1e1e2f;
+        }
+
+        .char-counter {
+            display: block;
+            text-align: right;
+            font-size: 12px;
+            color: #9999a2;
+            margin-top: 5px;
+        }
+
+        .hint {
+            font-size: 12px;
+            color: #9999a2;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div th:replace="~{navbar :: navbar}"></div>
+
+<section class="form-page">
+
+    <div class="support-card">
+
+        <h1>Contact Customer Support</h1>
+
+        <p class="intro">
+            Have a problem with your booking? Send us a message and
+            our support staff will help you.
+        </p>
+        
+        <div style="text-align: center; margin-bottom: 25px;">
+            <a href="/my-support-tickets" 
+               style="display: inline-block; padding: 8px 16px; background: #4f46e5; color: white; text-decoration: none; border-radius: 6px; font-size: 14px; font-weight: 600;">
+                My Support Tickets
+            </a>
+        </div>
+
+        <div th:if="${param.success}"
+             style="background: rgba(34,197,94,0.15); color: #16a34a; border: 1px solid rgba(34,197,94,0.4); padding: 12px 15px; border-radius: 8px; margin-bottom: 20px; text-align: center; font-weight: 700;">
+            Your support ticket has been submitted successfully. Our team will get back to you soon.
+        </div>
+
+        <div th:if="${error}"
+             style="background: rgba(237,17,28,0.12); color: #dc2626; border: 1px solid rgba(237,17,28,0.4); padding: 12px 15px; border-radius: 8px; margin-bottom: 20px; text-align: center; font-weight: 700;"
+             th:text="${error}">Error</div>
+
+        <div th:if="${emailWarning}"
+             style="background: rgba(245,158,11,0.15); color: #92400e; border: 1px solid rgba(245,158,11,0.4); padding: 12px 15px; border-radius: 8px; margin-bottom: 20px; text-align: center; font-weight: 700;"
+             th:text="${emailWarning}">Email warning</div>
+
+        <form th:action="@{/contact-support}"
+              th:object="${ticket}"
+              method="post"
+              enctype="multipart/form-data"
+              data-lock-submit>
+
+            <div class="field">
+                <label for="customerName">Your Name</label>
+                <input type="text"
+                       id="customerName"
+                       th:field="*{customerName}"
+                       placeholder="Enter your name"
+                       minlength="2"
+                       maxlength="80"
+                       required>
+            </div>
+
+            <div class="field">
+                <label for="email">Email</label>
+                <input type="email"
+                       id="email"
+                       th:field="*{email}"
+                       placeholder="Enter your email"
+                       maxlength="254"
+                       required>
+            </div>
+
+            <div class="field">
+                <label for="bookingId">Booking ID (optional)</label>
+                <input type="number"
+                       id="bookingId"
+                       th:field="*{bookingId}"
+                       min="1"
+                       step="1"
+                       inputmode="numeric"
+                       placeholder="Enter the booking ID related to your request">
+                <span class="hint">We verify the booking belongs to your account before linking it.</span>
+            </div>
+
+            <div class="field">
+                <label for="subject">Subject</label>
+                <input type="text"
+                       id="subject"
+                       th:field="*{subject}"
+                       placeholder="Enter your issue"
+                       minlength="5"
+                       maxlength="120"
+                       required>
+            </div>
+
+            <div class="field">
+                <label for="category">Category</label>
+                <select id="category" th:field="*{category}">
+                    <option value="BOOKING_ISSUE">Booking Issue</option>
+                    <option value="PAYMENT_ISSUE">Payment Issue</option>
+                    <option value="REFUND_REQUEST">Refund Request</option>
+                    <option value="CANCELLATION">Cancellation</option>
+                    <option value="TECHNICAL_ISSUE">Technical Issue</option>
+                    <option value="OTHER">Other</option>
+                </select>
+            </div>
+
+            <div class="field">
+                <label for="priority">Priority</label>
+                <select id="priority" th:field="*{priority}">
+                    <option value="LOW">Low</option>
+                    <option value="MEDIUM">Medium</option>
+                    <option value="HIGH">High</option>
+                    <option value="URGENT">Urgent</option>
+                </select>
+            </div>
+
+            <div class="field">
+                <label for="message">Message</label>
+                <textarea id="message"
+                          th:field="*{message}"
+                          placeholder="Describe your problem (10 - 2000 characters). Tamil and English are supported...."
+                          minlength="10"
+                          maxlength="2000"
+                          data-counter="#messageCounter"
+                          required></textarea>
+                <span class="char-counter" id="messageCounter">0 / 2000</span>
+            </div>
+
+            <div class="field">
+                <label for="attachment">Attachment (optional)</label>
+                <input type="file"
+                       id="attachment"
+                       name="attachment"
+                       accept=".jpg,.jpeg,.png,.pdf">
+                <span class="hint">Allowed: JPG, JPEG, PNG, PDF - max 5 MB.</span>
+            </div>
+
+            <div class="form-actions">
+                <a href="/" class="btn btn-secondary">Back</a>
+                <button type="submit" class="btn btn-primary">Submit Ticket</button>
+            </div>
+
+        </form>
+
+        <script>
+            (function () {
+                var area = document.getElementById('message');
+                var counter = document.getElementById('messageCounter');
+                function update() {
+                    if (counter) {
+                        counter.textContent = area.value.length + ' / 2000';
+                    }
+                }
+                area.addEventListener('input', update);
+                update();
+
+                var form = document.querySelector('form[data-lock-submit]');
+                if (form) {
+                    form.addEventListener('submit', function () {
+                        form.querySelectorAll('button[type="submit"]')
+                            .forEach(function (btn) { btn.disabled = true; });
+                    });
+                }
+            })();
+        </script>
+
+    </div>
+
+</section>
+
+<div th:replace="~{footer :: footer}"></div>
+
+</body>
+</html>
+
+

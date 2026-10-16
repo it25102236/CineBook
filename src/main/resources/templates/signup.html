@@ -1,0 +1,322 @@
+﻿<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Create Account - MovieBook</title>
+    <link rel="stylesheet"
+          th:href="@{/css/style.css}">
+
+    <style>
+        /* ================= SIGNUP PAGE ================= */
+        .auth-page {
+            min-height: calc(100vh - 80px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 60px 20px;
+            background: #ffffff;
+        }
+
+        .auth-card {
+            width: 100%;
+            max-width: 520px;
+            padding: 45px;
+            background: #ffffff;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 18px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.45);
+        }
+
+        .auth-logo {
+            text-align: center;
+            font-size: 30px;
+            font-weight: 800;
+            margin-bottom: 25px;
+            color: #1e1e2f;
+        }
+
+        .auth-logo span {
+            color: #ed111c;
+        }
+
+        .auth-card h1 {
+            text-align: center;
+            color: #1e1e2f;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .auth-subtitle {
+            text-align: center;
+            color: #9999a2;
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+
+        .auth-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .auth-field {
+            margin-bottom: 20px;
+        }
+
+        .auth-field label {
+            display: block;
+            color: #d8d8df;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .auth-field input,
+        .auth-field select {
+            width: 100%;
+            height: 50px;
+            padding: 0 15px;
+            box-sizing: border-box;
+            background: #ffffff;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            color: #1e1e2f;
+            outline: none;
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        .auth-field select {
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9'%3E%3Cpath fill='none' stroke='%23ed111c' stroke-width='2' d='M1 1l6 6 6-6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+        }
+
+        .auth-field input:focus,
+        .auth-field select:focus {
+            border-color: #ed111c;
+        }
+
+        .auth-hint {
+            font-size: 12px;
+            color: #77778a;
+            margin-top: 6px;
+        }
+
+        .auth-button {
+            width: 100%;
+            height: 52px;
+            margin-top: 5px;
+            border: none;
+            border-radius: 8px;
+            background: #ed111c;
+            color: #1e1e2f;
+            font-size: 15px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: 0.25s;
+        }
+
+        .auth-button:hover {
+            background: #ff1c27;
+            transform: translateY(-2px);
+        }
+
+        .auth-error {
+            margin-bottom: 20px;
+            padding: 12px;
+            border-radius: 7px;
+            background: rgba(237,17,28,0.12);
+            border: 1px solid rgba(237,17,28,0.3);
+            color: #ff6b72;
+            font-size: 13px;
+            text-align: center;
+        }
+
+        .auth-footer {
+            margin-top: 25px;
+            text-align: center;
+            color: #9999a2;
+            font-size: 14px;
+        }
+
+        .auth-footer a {
+            color: #ed111c;
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .auth-footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 600px) {
+            .auth-card {
+                padding: 30px 22px;
+            }
+            .auth-card h1 {
+                font-size: 26px;
+            }
+            .auth-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ================= NAVBAR ================= -->
+<div th:replace="~{navbar :: navbar}"></div>
+
+<!-- ================= SIGNUP ================= -->
+
+<section class="auth-page">
+    <div class="auth-card">
+
+        <div class="auth-logo">
+            <i class="fa-solid fa-film" aria-hidden="true"></i> <span>Movie</span>Book
+        </div>
+
+        <h1>Create Account</h1>
+
+        <p class="auth-subtitle">
+            Join MovieBook and start booking your favourite movies.
+        </p>
+
+        <!-- ERROR MESSAGE -->
+        <div class="auth-error"
+             th:if="${error}"
+             th:text="${error}">
+            Email already exists.
+        </div>
+
+        <!-- REGISTRATION FORM -->
+        <form th:action="@{/signup}"
+              th:object="${user}"
+              method="post">
+
+            <!-- NAME -->
+            <div class="auth-field">
+                <label for="name">Full Name</label>
+                <input type="text"
+                       id="name"
+                       th:field="*{name}"
+                       placeholder="Enter your full name"
+                      minlength="2"
+                      maxlength="50"
+                      pattern="[A-Za-z][A-Za-z .'-]{1,49}"
+                      title="Use 2 to 50 letters, spaces, apostrophes, periods, or hyphens."
+                       required>
+            </div>
+
+            <div class="auth-row">
+
+                <!-- EMAIL -->
+                <div class="auth-field">
+                    <label for="email">Email</label>
+                    <input type="email"
+                           id="email"
+                           th:field="*{email}"
+                           placeholder="you@example.com"
+                              maxlength="150"
+                              pattern="[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}"
+                           required>
+                </div>
+
+                <!-- TELEPHONE -->
+                <div class="auth-field">
+                    <label for="telephone">Telephone</label>
+                    <input type="tel"
+                           id="telephone"
+                           th:field="*{telephone}"
+                           placeholder="0771234567"
+                           pattern="[0-9]{10}"
+                           minlength="10"
+                           maxlength="10"
+                           inputmode="numeric"
+                           required>
+                </div>
+
+            </div>
+
+            <div class="auth-row">
+
+                <!-- DATE OF BIRTH -->
+                <div class="auth-field">
+                    <label for="dateOfBirth">Date of Birth</label>
+                    <input type="date"
+                           id="dateOfBirth"
+                           th:field="*{dateOfBirth}"
+                              th:attr="max=${maxDateOfBirth}"
+                           required>
+                </div>
+
+                <!-- USERNAME -->
+                <div class="auth-field">
+                    <label for="username">Username</label>
+                    <input type="text"
+                           id="username"
+                           th:field="*{username}"
+                           placeholder="Create a username"
+                           minlength="3"
+                           maxlength="30"
+                           pattern="[A-Za-z0-9_.-]{3,30}"
+                           title="Use 3 to 30 letters, numbers, dots, underscores, or hyphens."
+                           required>
+                </div>
+
+            </div>
+
+            <!-- PASSWORD -->
+            <div class="auth-field">
+                <label for="password">Password</label>
+                <input type="password"
+                       id="password"
+                       th:field="*{password}"
+                       placeholder="8 to 72 characters"
+                       minlength="8"
+                       maxlength="72"
+                       pattern="(?=.*[A-Za-z])(?=.*[0-9]).{8,72}"
+                       title="Use 8 to 72 characters with at least one letter and one number."
+                       required>
+                <div class="auth-hint">
+                    8 to 72 characters with at least one letter and one number.
+                </div>
+            </div>
+
+            <div class="auth-field">
+                <label for="accountType">Account Type</label>
+                <input type="text" id="accountType" value="Customer" readonly>
+            </div>
+
+            <!-- SUBMIT -->
+            <button type="submit" class="auth-button">
+                Create Account <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+            </button>
+
+        </form>
+
+        <!-- LOGIN LINK -->
+        <div class="auth-footer">
+            Already have an account?
+            <a href="/login">Login</a>
+        </div>
+
+    </div>
+</section>
+
+<!-- ================= FOOTER ================= -->
+<div th:replace="~{footer :: footer}"></div>
+
+</body>
+</html>
+
+
+
+

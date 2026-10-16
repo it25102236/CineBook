@@ -1,0 +1,400 @@
+﻿<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Payment Demo - CineBook</title>
+
+    <link rel="stylesheet"
+          th:href="@{/css/style.css}">
+
+    <style>
+
+        .payment-page {
+            max-width: 700px;
+            margin: 60px auto;
+            padding: 20px;
+        }
+
+        .payment-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .payment-header h1 {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+
+        .payment-header p {
+            color: #5f6b7a;
+        }
+
+        .payment-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 15px;
+            padding: 30px;
+        }
+
+        .booking-summary {
+            background: #ffffff;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .booking-summary h2 {
+            color: #1e1e2f;
+            margin-bottom: 20px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .summary-row:last-child {
+            border-bottom: none;
+        }
+
+        .summary-row span {
+            color: #5f6b7a;
+        }
+
+        .summary-row strong {
+            color: #1e1e2f;
+        }
+
+        .amount {
+            color: #ff3333 !important;
+            font-size: 22px;
+        }
+
+        .payment-method {
+            margin-bottom: 25px;
+        }
+
+        .payment-method h3 {
+            color: #1e1e2f;
+            margin-bottom: 15px;
+        }
+
+        .payment-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #ffffff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+
+        .payment-option:hover {
+            border: 1px solid #e50914;
+        }
+
+        .payment-option input {
+            accent-color: #e50914;
+        }
+
+        .payment-button {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            background: #e50914;
+            color: #1e1e2f;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .payment-button:hover {
+            background: #ff1a25;
+        }
+
+        .error-message {
+            background: #3a1010;
+            border: 1px solid #e50914;
+            color: #ff6b6b;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .simulation-notice {
+            margin-bottom: 20px;
+            padding: 14px 16px;
+            border: 1px solid #f59e0b;
+            border-radius: 10px;
+            background: #fffbeb;
+            color: #854d0e;
+            line-height: 1.5;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- ================= NAVBAR ================= -->
+
+<div th:replace="~{navbar :: navbar}"></div>
+
+
+<!-- ================= PAYMENT PAGE ================= -->
+
+<section class="payment-page">
+
+
+    <div class="payment-header">
+
+        <span class="section-label">
+            PAYMENT DEMO
+        </span>
+
+        <h1>
+            Record Demo Payment
+        </h1>
+
+        <p>
+            Record a simulated payment before your seat lock expires.
+        </p>
+
+    </div>
+
+
+    <!-- ================= ERROR ================= -->
+
+    <div th:if="${error}"
+         class="error-message">
+
+        <span th:text="${error}">
+            Booking not found.
+        </span>
+
+    </div>
+
+    <div class="simulation-notice" th:if="${simulatedPayment}">
+        Demo mode: this form records a simulated payment only. No card, cash, or online payment provider is connected, and no real charge will be made.
+    </div>
+
+
+    <!-- ================= PAYMENT CARD ================= -->
+
+    <div class="payment-card"
+         th:if="${booking != null}">
+
+
+        <!-- ================= BOOKING SUMMARY ================= -->
+
+        <div class="booking-summary">
+
+            <h2>
+                Booking Details
+            </h2>
+
+
+            <div class="summary-row">
+
+                <span>
+                    Booking ID
+                </span>
+
+                <strong th:text="${booking.id}">
+                    1
+                </strong>
+
+            </div>
+
+
+            <div class="summary-row">
+
+                <span>
+                    Movie
+                </span>
+
+                <strong th:text="${booking.movieTitle}">
+                    Sarthar
+                </strong>
+
+            </div>
+
+
+            <div class="summary-row">
+
+                <span>
+                    Theatre
+                </span>
+
+                <strong th:text="${booking.theatre}">
+                    SLIIT Cinema Hall
+                </strong>
+
+            </div>
+
+
+            <div class="summary-row">
+
+                <span>
+                    Date
+                </span>
+
+                <strong th:text="${booking.date}">
+                    2026-09-20
+                </strong>
+
+            </div>
+
+
+            <div class="summary-row">
+
+                <span>
+                    Show Time
+                </span>
+
+                <strong th:text="${booking.showTime}">
+                    06:30 PM
+                </strong>
+
+            </div>
+
+
+            <div class="summary-row">
+
+                <span>
+                    Seat
+                </span>
+
+                <strong th:text="${booking.seatNumber}">
+                    A1
+                </strong>
+
+            </div>
+
+
+            <div class="summary-row">
+
+                <span>
+                    Total Amount
+                </span>
+
+                <strong class="amount">
+
+                    LKR
+                    <span th:text="${booking.price}">
+                        1000
+                    </span>
+
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <!-- ================= PAYMENT FORM ================= -->
+
+        <form th:action="@{/payment/process}"
+              method="post">
+
+            <!-- Booking ID -->
+
+            <input type="hidden"
+                   name="bookingId"
+                   th:value="${booking.id}">
+
+
+            <!-- ================= PAYMENT METHOD ================= -->
+
+            <div class="payment-method">
+
+                <h3>
+                    Select Payment Method
+                </h3>
+
+
+                <label class="payment-option">
+
+                    <input type="radio"
+                           name="paymentMethod"
+                           value="CARD"
+                           checked
+                           required>
+
+                    <i class="fa-solid fa-credit-card" aria-hidden="true"></i> Credit / Debit Card
+
+                </label>
+
+
+                <label class="payment-option">
+
+                    <input type="radio"
+                           name="paymentMethod"
+                           value="CASH">
+
+                    <i class="fa-solid fa-money-bill-wave" aria-hidden="true"></i> Cash
+
+                </label>
+
+
+                <label class="payment-option">
+
+                    <input type="radio"
+                           name="paymentMethod"
+                           value="ONLINE">
+
+                    <i class="fa-solid fa-globe" aria-hidden="true"></i> Online Payment
+
+                </label>
+
+            </div>
+
+
+            <!-- ================= PAY BUTTON ================= -->
+
+            <button type="submit"
+                    class="payment-button">
+
+                <i class="fa-solid fa-credit-card" aria-hidden="true"></i> Record Simulated Payment
+
+                <span th:text="${booking.price}">
+                    1000
+                </span>
+
+                <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+
+            </button>
+
+        </form>
+
+
+    </div>
+
+
+</section>
+
+
+<!-- ================= FOOTER ================= -->
+
+<div th:replace="~{footer :: footer}"></div>
+
+
+</body>
+
+</html>
+

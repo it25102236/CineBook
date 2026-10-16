@@ -1,0 +1,230 @@
+﻿<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Marketing Dashboard - MovieBook</title>
+
+    <link rel="stylesheet"
+          th:href="@{/css/style.css}">
+
+    <style>
+
+        .manager-page {
+            padding: 50px 8%;
+            min-height: 70vh;
+        }
+
+        .manager-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .manager-header h1 {
+            margin-bottom: 10px;
+        }
+
+        .manager-header p {
+            color: #5f6b7a;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 25px;
+            margin-bottom: 35px;
+        }
+
+        .card {
+            padding: 25px;
+            border-radius: 15px;
+            background: #ffffff;
+            border: 1px solid #2d2d36;
+        }
+
+        .card h3 {
+            margin-bottom: 12px;
+            font-size: 15px;
+            color: #c7c7cc;
+        }
+
+        .card p {
+            color: #5f6b7a;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .stat-number {
+            font-size: 32px;
+            font-weight: bold;
+            color: #ed111c;
+            margin-bottom: 8px;
+        }
+
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+        }
+
+        .action-card h3 {
+            font-size: 18px;
+            color: #1e1e2f;
+            margin-bottom: 10px;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 10px 18px;
+            border-radius: 8px;
+            background: #ed111c;
+            color: #1e1e2f;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .button:hover {
+            opacity: 0.85;
+        }
+
+        .button.secondary {
+            background: transparent;
+            border: 1px solid #35353d;
+        }
+
+        .button.secondary:hover {
+            border-color: #ed111c;
+            opacity: 1;
+        }
+
+        @media (max-width: 900px) {
+
+            .dashboard-grid,
+            .actions-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+        }
+
+        @media (max-width: 600px) {
+
+            .dashboard-grid,
+            .actions-grid {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+
+<!-- ================= NAVBAR ================= -->
+
+<div th:replace="~{navbar :: navbar}"></div>
+
+
+<!-- ================= DASHBOARD ================= -->
+
+<section class="manager-page">
+
+    <div class="manager-header">
+
+        <span class="section-label">
+            MARKETING MANAGEMENT
+        </span>
+
+        <h1>
+            Marketing Dashboard
+        </h1>
+
+        <p>
+            Manage promotions, discounts and movie campaigns.
+        </p>
+
+    </div>
+
+
+    <!-- ================= STATS ================= -->
+
+    <div class="dashboard-grid">
+
+        <div class="card">
+            <h3>TOTAL PROMOTIONS</h3>
+            <div class="stat-number" th:text="${promotionCount}">0</div>
+        </div>
+
+        <div class="card">
+            <h3>ACTIVE PROMOTIONS</h3>
+            <div class="stat-number" th:text="${activeCount}">0</div>
+        </div>
+
+        <div class="card">
+            <h3>INACTIVE PROMOTIONS</h3>
+            <div class="stat-number" th:text="${inactiveCount}">0</div>
+        </div>
+
+        <div class="card">
+            <h3>CAMPAIGN ENGAGEMENT</h3>
+            <div class="stat-number">68%</div>
+            <p style="margin:0;">Sample engagement rate</p>
+        </div>
+
+    </div>
+
+
+    <!-- ================= ACTIONS ================= -->
+
+    <div class="actions-grid">
+
+        <div class="card action-card">
+            <h3><i class="fa-solid fa-ticket" aria-hidden="true"></i> Manage Promotions</h3>
+            <p>View, edit and remove existing promotions and discounts.</p>
+            <a href="/marketing/promotions" class="button">
+                View Promotions
+            </a>
+        </div>
+
+        <div class="card action-card">
+            <h3><i class="fa-solid fa-plus" aria-hidden="true"></i> Create Promotion</h3>
+            <p>Design a new promotional offer or seasonal discount.</p>
+            <a href="/marketing/promotions/add" class="button">
+                Add Promotion
+            </a>
+        </div>
+
+        <div class="card action-card">
+            <h3><i class="fa-solid fa-chart-column" aria-hidden="true"></i> Engagement Analytics</h3>
+            <p>Track customer engagement across active movie campaigns.</p>
+             <a href="/marketing/campaigns" class="button secondary">
+                 View Campaigns
+             </a>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================= FOOTER ================= -->
+
+<div th:replace="~{footer :: footer}"></div>
+
+
+</body>
+
+</html>
+
+
+
+

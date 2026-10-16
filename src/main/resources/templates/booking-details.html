@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Details - CineBook</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        .details-page {
+            max-width: 760px;
+            margin: 48px auto;
+            padding: 20px;
+        }
+
+        .details-card {
+            padding: 28px;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            background: #ffffff;
+        }
+
+        .details-card h1 {
+            margin-top: 0;
+        }
+
+        .details-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 13px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .details-row span {
+            color: #5f6b7a;
+        }
+
+        .payment-note {
+            margin-top: 20px;
+            padding: 14px;
+            border-radius: 8px;
+            background: #fef3c7;
+            color: #854d0e;
+        }
+
+        .details-back {
+            display: inline-block;
+            margin-top: 20px;
+            color: #6c5ce7;
+            font-weight: 700;
+        }
+
+        @media (max-width: 520px) {
+            .details-row {
+                flex-direction: column;
+                gap: 4px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div th:replace="~{navbar :: navbar}"></div>
+<main class="details-page">
+    <section class="details-card">
+        <span class="section-label">YOUR BOOKING</span>
+        <h1 th:text="${booking.movieTitle}">Movie Title</h1>
+
+        <div class="details-row">
+            <span>Booking reference</span>
+            <strong th:text="|CB-${booking.id}|">CB-1</strong>
+        </div>
+        <div class="details-row">
+            <span>Theatre</span>
+            <strong th:text="${booking.theatre}">Theatre</strong>
+        </div>
+        <div class="details-row">
+            <span>Show date</span>
+            <strong th:text="${booking.date}">2026-01-01</strong>
+        </div>
+        <div class="details-row">
+            <span>Showtime</span>
+            <strong th:text="${booking.showTime}">7:00 PM</strong>
+        </div>
+        <div class="details-row">
+            <span>Selected seats</span>
+            <strong th:text="${booking.seatNumber}">A1</strong>
+        </div>
+        <div class="details-row">
+            <span>Total amount</span>
+            <strong th:text="|LKR ${#numbers.formatDecimal(booking.price, 1, 2)}|">LKR 1000.00</strong>
+        </div>
+        <div class="details-row">
+            <span>Payment status</span>
+            <strong th:text="${paymentStatus}">NOT PAID</strong>
+        </div>
+        <div class="details-row">
+            <span>Booking status</span>
+            <strong th:text="${booking.status}">LOCKED</strong>
+        </div>
+        <div class="details-row" th:if="${payment != null}">
+            <span>Payment method</span>
+            <strong th:text="${payment.paymentMethod}">CARD</strong>
+        </div>
+        <p class="payment-note"
+           th:if="${payment != null and (payment.status == 'SIMULATED' or payment.status == 'REFUND_SIMULATED')}">
+            This is a simulated payment/refund record for demonstration only. No payment provider processed a charge or refund.
+        </p>
+        <a class="details-back" th:href="@{/my-bookings}">Back to My Bookings</a>
+    </section>
+</main>
+<div th:replace="~{footer :: footer}"></div>
+</body>
+</html>
