@@ -1,0 +1,336 @@
+﻿<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>My Profile - MovieBook</title>
+    <link rel="stylesheet" href="/css/style.css">
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: #f4f6fb;
+            color: #1e1e2f;
+            padding: 18px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 25px;
+            font-weight: bold;
+        }
+
+        .logo span {
+            color: #e50914;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: #1e1e2f;
+            text-decoration: none;
+        }
+
+        .nav-links a:hover {
+            color: #e50914;
+        }
+
+        .container {
+            width: 500px;
+            max-width: 90%;
+            margin: 50px auto;
+            background: white;
+            padding: 35px;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.10);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 25px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 7px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 15px;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #e50914;
+        }
+
+        input[readonly] {
+            background: #f1f1f1;
+        }
+
+        .button {
+            width: 100%;
+            padding: 13px;
+            border: none;
+            border-radius: 6px;
+            background: #e50914;
+            color: #1e1e2f;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .button:hover {
+            background: #c40810;
+        }
+
+        .success {
+            background: #d4edda;
+            color: #155724;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 18px;
+            text-align: center;
+        }
+
+        .error {
+            background: #ffe5e5;
+            color: #c00000;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 18px;
+            text-align: center;
+        }
+
+        .back {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: #333;
+            text-decoration: none;
+        }
+
+        .back:hover {
+            color: #e50914;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+
+<!-- ================= NAVBAR ================= -->
+
+<div th:replace="~{navbar :: navbar}"></div>
+
+
+<!-- ================= PROFILE ================= -->
+
+<div class="container">
+
+    <h1>
+        My Profile
+    </h1>
+
+    <p class="subtitle">
+        Update your customer information
+    </p>
+
+
+    <!-- SUCCESS MESSAGE -->
+
+    <div class="success"
+         th:if="${param.success}">
+
+        Profile updated successfully!
+
+    </div>
+
+
+    <!-- ERROR MESSAGE -->
+
+    <div class="error"
+         th:if="${error}"
+         th:text="${error}">
+
+    </div>
+
+
+    <!-- PROFILE FORM -->
+
+    <form th:action="@{/profile}"
+          th:object="${user}"
+          method="post">
+
+
+        <!-- CUSTOMER ID -->
+
+        <div class="form-group">
+
+            <label>
+                Customer ID
+            </label>
+
+            <input type="text"
+                   th:value="${user.id}"
+                   readonly>
+
+        </div>
+
+
+        <!-- NAME -->
+
+        <div class="form-group">
+
+            <label for="name">
+                Full Name
+            </label>
+
+            <input type="text"
+                   id="name"
+                   th:field="*{name}"
+                   minlength="2"
+                   maxlength="50"
+                   pattern="[A-Za-z][A-Za-z .'-]{1,49}"
+                   required>
+
+        </div>
+
+
+        <!-- EMAIL -->
+
+        <div class="form-group">
+
+            <label for="email">
+                Email
+            </label>
+
+            <input type="email"
+                   id="email"
+                   th:field="*{email}"
+                   maxlength="150"
+                   pattern="[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}"
+                   required>
+
+        </div>
+
+
+        <!-- TELEPHONE -->
+
+        <div class="form-group">
+
+            <label for="telephone">
+                Telephone
+            </label>
+
+            <input type="tel"
+                   id="telephone"
+                   th:field="*{telephone}"
+                   pattern="[0-9]{10}"
+                   minlength="10"
+                   maxlength="10"
+                   required>
+
+        </div>
+
+
+        <!-- DATE OF BIRTH -->
+
+        <div class="form-group">
+
+            <label for="dateOfBirth">
+                Date of Birth
+            </label>
+
+            <input type="date"
+                   id="dateOfBirth"
+                   th:field="*{dateOfBirth}"
+                   th:attr="max=${maxDateOfBirth}"
+                   required>
+
+        </div>
+
+
+        <!-- USERNAME -->
+
+        <div class="form-group">
+
+            <label>
+                Username
+            </label>
+
+            <input type="text"
+                   th:value="${user.username}"
+                   readonly>
+
+        </div>
+
+
+        <!-- UPDATE BUTTON -->
+
+        <button type="submit"
+                class="button">
+
+            Update Profile
+
+        </button>
+
+    </form>
+
+
+    <a href="/"
+       class="back">
+
+        <i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Back to Home
+
+    </a>
+
+</div>
+
+<div th:replace="~{footer :: footer}"></div>
+</body>
+
+</html>
+
+
+

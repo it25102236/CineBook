@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title th:text="${showtimeDto.id != null} ? 'Edit Showtime - CineBook' : 'Add Showtime - CineBook'">Add Showtime - CineBook</title>
+    <link rel="stylesheet" href="/css/style.css">
+
+    <style>
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6fb;
+            color: #1e1e2f;
+        }
+
+        .navbar {
+            background: #ffffff;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar h2 {
+            margin: 0;
+        }
+
+        .logout {
+            color: #ff5555;
+            text-decoration: none;
+        }
+
+        .container {
+            width: 500px;
+            margin: 50px auto;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+        }
+
+        h1 {
+            margin-top: 0;
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            margin-bottom: 7px;
+        }
+
+        input, select {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            background: #ffffff;
+            color: #1e1e2f;
+            border: 1px solid #e2e8f0;
+        }
+
+        input:focus, select:focus {
+            outline: 2px solid #2563eb;
+        }
+
+        select option {
+            background: #ffffff;
+            color: #1e1e2f;
+        }
+
+        .time-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .time-row select {
+            padding: 12px 8px;
+            text-align: center;
+        }
+
+        .time-row select.time-hour,
+        .time-row select.time-minute {
+            flex: 1 1 0;
+            min-width: 0;
+        }
+
+        .time-row select.time-period {
+            flex: 0 0 88px;
+        }
+
+        .time-separator {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .time-hint {
+            margin-top: 6px;
+            color: #5f6b7a;
+            font-size: 13px;
+        }
+
+        .maintenance-note {
+            color: #f87171;
+            font-size: 13px;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 11px 20px;
+            background: #2563eb;
+            color: #1e1e2f;
+            text-decoration: none;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 25px;
+        }
+
+        .button:hover {
+            opacity: 0.85;
+        }
+
+        .back {
+            background: #374151;
+            margin-left: 8px;
+        }
+
+        .error-message {
+            background: #3a1010;
+            border: 1px solid #e50914;
+            color: #ff6b6b;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+
+<!-- NAVBAR -->
+
+<div th:replace="~{navbar :: navbar}"></div>
+
+
+<!-- FORM -->
+
+<div class="container">
+
+    <h1 th:text="${showtimeDto.id != null} ? 'Edit Showtime' : 'Add Showtime'">
+        <i class="fa-solid fa-plus" aria-hidden="true"></i> Add Showtime
+    </h1>
+
+
+    <!-- ERROR MESSAGE -->
+
+    <div th:if="${error}" class="error-message">
+        <span th:text="${error}">Error message</span>
+    </div>
+
+
+    <form th:action="${formAction}"
+          th:object="${showtimeDto}"
+          method="post"
+          id="showtimeForm">
+
+
+        <!-- ID (hidden for edit) -->
+
+        <input type="hidden" th:field="*{id}">
+
+
+        <!-- MOVIE (loaded from the movie database) -->
+
+        <label>
+            Movie
+        </label>
+
+        <select th:field="*{movieId}" id="movieSelect" required>
+
+            <option value="">Select Movie</option>
+
+            <option th:each="movie : ${movies}"
+                    th:value="${movie.id}"
+                    th:text="${movie.title}">
+            </option>
+
+        </select>
+
+
+        <!-- THEATRE -->
+
+        <label>
+            Theatre
+        </label>
+
+        <select th:field="*{theatre}" required
+                id="theatreSelect"
+                th:data-current-capacity="${selectedTheatreCapacity != null ? selectedTheatreCapacity : ''}">
+
+            <option value="">Select Theatre</option>
+
+            <option th:each="theatre : ${theatres}"
+                    th:value="${theatre.name}"
+                    th:text="${theatre.isUnderMaintenance()} ? ${theatre.name + ' (MAINTENANCE)'} : ${theatre.name}"
+                    th:data-total-seats="${theatre.totalSeats}"
+                    th:data-maintenance="${theatre.isUnderMaintenance()}">
+            </option>
+
+            <option value="NEW_THEATRE"
+                    th:selected="${showtimeDto.theatre == 'NEW_THEATRE'}">
+                New Theatre
+            </option>
+
+        </select>
+
+
+        <!-- ================= THEATRE CAPACITY (display) ================= -->
+
+        <div th:if="${theatres != null and !theatres.isEmpty()}" id="capacityHint" style="display:none; margin-top: 5px; color: #5f6b7a; font-size: 13px;">
+            Theatre capacity: <span id="capacityValue"></span> seats
+        </div>
+
+        <div id="maintenanceNote"
+             class="maintenance-note"
+             style="display:none; margin-top: 5px;">
+            This theatre is under maintenance and cannot be given a new showtime.
+        </div>
+
+
+        <!-- ================= NEW THEATRE FIELDS ================= -->
+
+        <div id="newTheatreFields" style="display:none; margin-top: 15px; padding: 15px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0;">
+
+            <h4 style="margin-top: 0; margin-bottom: 15px; color: #2563eb;">New Theatre Details</h4>
+
+            <label>
+                Theatre Name
+            </label>
+
+            <input type="text"
+                   th:field="*{newTheatreName}"
+                   placeholder="Enter theatre name"
+                   id="newTheatreName">
+
+            <label>
+                Location
+            </label>
+
+            <input type="text"
+                   th:field="*{newTheatreLocation}"
+                   placeholder="Enter theatre location"
+                   required
+                   minlength="2"
+                   maxlength="200"
+                   id="newTheatreLocation">
+
+            <label>
+                Capacity
+            </label>
+
+            <input type="number"
+                   th:field="*{newTheatreCapacity}"
+                   min="1"
+                   max="500"
+                   step="1"
+                   inputmode="numeric"
+                   pattern="\d+"
+                   title="Enter a whole number between 1 and 500."
+                   placeholder="Enter total seats"
+                   required
+                   id="newTheatreCapacity">
+
+        </div>
+
+
+        <!-- DATE -->
+
+        <label>
+            Date
+        </label>
+
+        <input type="date"
+               th:field="*{date}"
+               th:min="${datePickerMin}"
+               required>
+
+        <div class="time-hint">Pick the date from the calendar. Dates in the past cannot be used.</div>
+
+
+        <!-- START TIME (manual hour + minutes + AM/PM) -->
+
+        <label for="startHour">
+            Start Time
+        </label>
+
+        <div class="time-row">
+
+            <select name="startHour" id="startHour" class="time-hour" required>
+
+                <option value="" th:selected="${startHour == null or startHour.isEmpty()}">--</option>
+
+                <option th:each="h : ${#numbers.sequence(1, 12)}"
+                        th:value="${h < 10 ? '0' + h : '' + h}"
+                        th:text="${h < 10 ? '0' + h : '' + h}"
+                        th:selected="${(h < 10 ? '0' + h : '' + h) == startHour}">
+                </option>
+
+            </select>
+
+            <span class="time-separator">:</span>
+
+            <select name="startMinute" id="startMinute" class="time-minute" required>
+
+                <option value="" th:selected="${startMinute == null or startMinute.isEmpty()}">--</option>
+
+                <option th:each="m : ${#numbers.sequence(0, 59)}"
+                        th:value="${m < 10 ? '0' + m : '' + m}"
+                        th:text="${m < 10 ? '0' + m : '' + m}"
+                        th:selected="${(m < 10 ? '0' + m : '' + m) == startMinute}">
+                </option>
+
+            </select>
+
+            <select name="startPeriod" id="startPeriod" class="time-period" required>
+
+                <option value="AM" th:selected="${startPeriod == 'AM'}">AM</option>
+                <option value="PM" th:selected="${startPeriod == 'PM'}">PM</option>
+
+            </select>
+
+        </div>
+
+        <div class="time-hint">Pick the hour, minutes and AM or PM. Start time must be earlier than end time.</div>
+
+
+        <!-- END TIME (manual hour + minutes + AM/PM) -->
+
+        <label for="endHour">
+            End Time
+        </label>
+
+        <div class="time-row">
+
+            <select name="endHour" id="endHour" class="time-hour" required>
+
+                <option value="" th:selected="${endHour == null or endHour.isEmpty()}">--</option>
+
+                <option th:each="h : ${#numbers.sequence(1, 12)}"
+                        th:value="${h < 10 ? '0' + h : '' + h}"
+                        th:text="${h < 10 ? '0' + h : '' + h}"
+                        th:selected="${(h < 10 ? '0' + h : '' + h) == endHour}">
+                </option>
+
+            </select>
+
+            <span class="time-separator">:</span>
+
+            <select name="endMinute" id="endMinute" class="time-minute" required>
+
+                <option value="" th:selected="${endMinute == null or endMinute.isEmpty()}">--</option>
+
+                <option th:each="m : ${#numbers.sequence(0, 59)}"
+                        th:value="${m < 10 ? '0' + m : '' + m}"
+                        th:text="${m < 10 ? '0' + m : '' + m}"
+                        th:selected="${(m < 10 ? '0' + m : '' + m) == endMinute}">
+                </option>
+
+            </select>
+
+            <select name="endPeriod" id="endPeriod" class="time-period" required>
+
+                <option value="AM" th:selected="${endPeriod == 'AM'}">AM</option>
+                <option value="PM" th:selected="${endPeriod == 'PM'}">PM</option>
+
+            </select>
+
+        </div>
+
+
+        <!-- TOTAL SEATS (auto-filled from theatre capacity) -->
+
+        <label>
+            Total Seats <small>(auto-filled from theatre capacity)</small>
+        </label>
+
+        <input type="number"
+               th:field="*{totalSeats}"
+               id="totalSeats"
+               min="1"
+               placeholder="Select a theatre to set capacity"
+               readonly>
+
+
+        <!-- AVAILABLE SEATS (always starts equal to total seats) -->
+
+        <label>
+            Available Seats <small>(auto-filled from total seats)</small>
+        </label>
+
+        <input type="number"
+               id="availableSeats"
+               min="0"
+               th:attr="data-current-available=${selectedAvailableSeats != null ? selectedAvailableSeats : ''}"
+               placeholder="Auto-filled"
+               readonly>
+
+
+        <!-- TICKET PRICE -->
+
+        <label>
+            Ticket Price (LKR)
+        </label>
+
+        <input type="number"
+               id="ticketPrice"
+               name="ticketPrice"
+               step="0.01"
+               min="0.01"
+               inputmode="decimal"
+               title="Enter a price greater than 0."
+               placeholder="Example: 1500"
+               required
+               th:value="${showtimeDto.id != null || showtimeDto.ticketPrice > 0 ? showtimeDto.ticketPrice : ''}">
+
+        <div class="time-hint">Type the ticket price manually. It must be more than 0.</div>
+
+
+        <!-- BUTTONS -->
+
+        <button type="submit"
+                class="button">
+
+            <span th:text="${showtimeDto.id != null} ? 'Update Showtime' : 'Add Showtime'">Add Showtime</span>
+
+        </button>
+
+
+        <a href="/theatre-manager/showtimes"
+           class="button back">
+
+            Cancel
+
+        </a>
+
+    </form>
+
+</div>
+
+
+<!-- ================= THEATRE CAPACITY AUTO-FILL ================= -->
+
+ <script>
+    (function () {
+        var theatreSelect = document.getElementById("theatreSelect");
+        var totalSeatsInput = document.getElementById("totalSeats");
+        var availableSeatsInput = document.getElementById("availableSeats");
+        var capacityHint = document.getElementById("capacityHint");
+        var capacityValue = document.getElementById("capacityValue");
+        var newTheatreFields = document.getElementById("newTheatreFields");
+        var newTheatreName = document.getElementById("newTheatreName");
+        var newTheatreLocation = document.getElementById("newTheatreLocation");
+        var newTheatreCapacity = document.getElementById("newTheatreCapacity");
+        var maintenanceNote = document.getElementById("maintenanceNote");
+
+        function isNewTheatreSelected() {
+            return theatreSelect.value === "NEW_THEATRE";
+        }
+
+        // The "new theatre" fields are hidden unless the manager picks
+        // "New Theatre". They must only be required while they are
+        // visible: a required control inside a hidden block fails the
+        // browser's form validation and silently blocks every submission.
+        function syncNewTheatreRequired() {
+            var isNew = isNewTheatreSelected();
+            if (newTheatreLocation) {
+                newTheatreLocation.required = isNew;
+            }
+            if (newTheatreCapacity) {
+                newTheatreCapacity.required = isNew;
+            }
+        }
+
+        // Total Seats always mirrors the theatre capacity, and a new showtime
+        // always starts with every seat available. When editing, the seats
+        // already sold stay sold, so the stored value is kept instead.
+        function syncSeats(capacity) {
+            var value = parseInt(capacity, 10);
+            if (isNaN(value) || value < 0) {
+                totalSeatsInput.value = "";
+                availableSeatsInput.value = "";
+                return;
+            }
+            totalSeatsInput.value = value;
+
+            var stored = parseInt(availableSeatsInput.dataset.currentAvailable, 10);
+            if (!isNaN(stored)) {
+                // Editing: never show more available seats than exist
+                availableSeatsInput.value = Math.max(0, Math.min(stored, value));
+            } else {
+                availableSeatsInput.value = value;
+            }
+        }
+
+        // Maintenance theatres stay selectable so an existing showtime can keep
+        // its own theatre while editing, but the manager is warned that no new
+        // showtime can be assigned to one.
+        function showMaintenanceNote(selected) {
+            if (!maintenanceNote) {
+                return;
+            }
+            var isMaintenance = !!(selected && selected.dataset.maintenance === "true");
+            maintenanceNote.style.display = isMaintenance ? "block" : "none";
+        }
+
+        function setCapacityFromTheatre() {
+            syncNewTheatreRequired();
+
+            if (isNewTheatreSelected()) {
+                newTheatreFields.style.display = "block";
+                totalSeatsInput.value = "";
+                totalSeatsInput.placeholder = "Will be set from theatre capacity";
+                availableSeatsInput.value = "";
+                capacityHint.style.display = "none";
+                showMaintenanceNote(null);
+                return;
+            }
+
+            newTheatreFields.style.display = "none";
+
+            var selected = theatreSelect.options[theatreSelect.selectedIndex];
+            showMaintenanceNote(selected);
+            if (!selected || !selected.value || !selected.dataset.totalSeats) {
+                syncSeats("");
+                capacityHint.style.display = "none";
+                return;
+            }
+            var capacity = parseInt(selected.dataset.totalSeats, 10);
+            syncSeats(capacity);
+            capacityHint.style.display = "block";
+            capacityValue.textContent = capacity;
+        }
+
+        function setCapacityFromNewTheatre() {
+            var capInput = document.getElementById("newTheatreCapacity");
+            if (capInput && capInput.value && parseInt(capInput.value, 10) > 0) {
+                syncSeats(capInput.value);
+                capacityHint.style.display = "block";
+                capacityValue.textContent = capInput.value;
+            } else {
+                totalSeatsInput.value = "";
+                availableSeatsInput.value = "";
+                capacityHint.style.display = "none";
+            }
+        }
+
+        if (theatreSelect && totalSeatsInput) {
+            theatreSelect.addEventListener("change", setCapacityFromTheatre);
+
+            if (newTheatreName) {
+                newTheatreName.addEventListener("input", function() {
+                    if (isNewTheatreSelected()) {
+                        setCapacityFromNewTheatre();
+                    }
+                });
+            }
+
+            var capInput = document.getElementById("newTheatreCapacity");
+            if (capInput) {
+                capInput.addEventListener("input", setCapacityFromNewTheatre);
+                capInput.addEventListener("change", setCapacityFromNewTheatre);
+            }
+
+            setCapacityFromTheatre();
+        }
+
+        // ===== AUTO-UPDATE SHOWTIME =====
+        // Intercept the edit form submission so the server updates the row
+        // without a full page reload. On success we refresh the list page and
+        // the table shows the changed data automatically.
+        var editForm = document.getElementById("showtimeForm");
+        if (editForm && editForm.action && editForm.action.indexOf("/theatre-manager/showtimes/edit") !== -1) {
+
+            editForm.addEventListener("submit", function(event) {
+                event.preventDefault();
+
+                var formData = new FormData(editForm);
+                formData.append("ajax", "true");
+
+                var submitBtn = editForm.querySelector('button[type="submit"]');
+                var originalText = submitBtn.textContent;
+                submitBtn.textContent = "Updating...";
+                submitBtn.disabled = true;
+
+                fetch(editForm.action + "-ajax", {
+                    method: "POST",
+                    body: formData
+                })
+                .then(function(response) {
+                    return response.json().then(function(data) {
+                        submitBtn.textContent = originalText;
+                        submitBtn.disabled = false;
+
+                        if (response.ok && data.success) {
+                            showToast("Showtime updated successfully.", "success");
+                            // Refresh the list page so the table shows the change
+                            window.location.replace("/theatre-manager/showtimes");
+                        } else {
+                            showToast(data.error || "Update failed. Please try again.", "error");
+                            showFormError(data.error);
+                        }
+                    });
+                })
+                .catch(function() {
+                    submitBtn.textContent = originalText;
+                    submitBtn.disabled = false;
+                    showToast("Update failed. Please check your connection and try again.", "error");
+                });
+            });
+        }
+
+        // Show a dismissible inline error message on the form
+        function showFormError(error) {
+            var errorBox = document.createElement("div");
+            errorBox.className = "error-message";
+            errorBox.setAttribute("role", "alert");
+            errorBox.innerHTML = "<span>" + escapeHtml(error) + "</span>";
+            editForm.insertBefore(errorBox, editForm.querySelector("button[type='submit']"));
+        }
+
+        // Escape HTML so user-supplied content is rendered as text only
+        function escapeHtml(text) {
+            var div = document.createElement("div");
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Show a transient toast notification in the corner of the screen
+        function showToast(message, type) {
+            var toast = document.createElement("div");
+            toast.setAttribute("role", "status");
+            toast.style.cssText = "position:fixed;top:20px;right:20px;z-index:9999;padding:12px 20px 12px 24px;border-radius:6px;color:#fff;font-weight:bold;box-shadow:0 2px 8px rgba(0,0,0,0.2);";
+            toast.style.background = type === "success" ? "#15803d" : "#b91c1c";
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(function() {
+                toast.style.opacity = "0";
+                toast.style.transition = "opacity 0.4s";
+                setTimeout(function() {
+                    toast.remove();
+                }, 400);
+            }, 3000);
+        }
+    })();
+</script>
+
+
+<div th:replace="~{footer :: footer}"></div>
+</body>
+
+</html>

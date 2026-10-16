@@ -1,0 +1,966 @@
+﻿<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+    <title>Ticket Details - MovieBook</title>
+
+    <link rel="stylesheet"
+          th:href="@{/css/style.css}">
+
+    <style>
+
+        .form-page {
+            min-height: 70vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 60px 20px;
+        }
+
+        .ticket-card {
+            width: 100%;
+            max-width: 720px;
+            padding: 40px;
+            background: #ffffff;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 18px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.45);
+        }
+
+        .ticket-card h1 {
+            margin-bottom: 28px;
+        }
+
+        .detail {
+            margin-bottom: 18px;
+        }
+
+        .detail strong {
+            display: block;
+            margin-bottom: 6px;
+            color: #d8d8df;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .detail span {
+            color: #1e1e2f;
+            font-size: 15px;
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0 24px;
+        }
+
+        .message {
+            background: #ffffff;
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 8px;
+            color: #1e1e2f;
+            white-space: pre-wrap;
+        }
+
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            display: inline-block;
+            background: rgba(245,158,11,0.15);
+            color: #f5a524;
+        }
+
+        .status-badge.inprogress {
+            background: rgba(59,130,246,0.15);
+            color: #3b82f6;
+        }
+
+        .status-badge.resolved {
+            background: rgba(34,197,94,0.15);
+            color: #22c55e;
+        }
+
+        .priority-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            display: inline-block;
+            background: rgba(107,114,128,0.15);
+            color: #6b7280;
+        }
+
+        .priority-badge.low {
+            background: rgba(34,197,94,0.15);
+            color: #16a34a;
+        }
+
+        .priority-badge.medium {
+            background: rgba(59,130,246,0.15);
+            color: #2563eb;
+        }
+
+        .priority-badge.high {
+            background: rgba(245,158,11,0.15);
+            color: #d97706;
+        }
+
+        .priority-badge.urgent {
+            background: rgba(237,17,28,0.15);
+            color: #dc2626;
+        }
+
+        .category-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            display: inline-block;
+            background: rgba(124,58,237,0.12);
+            color: #7c3aed;
+        }
+
+        .escalation-banner {
+            background: rgba(237,17,28,0.08);
+            border: 1px solid rgba(237,17,28,0.35);
+            border-radius: 10px;
+            padding: 14px 16px;
+            margin-bottom: 20px;
+            color: #991b1b;
+            font-size: 14px;
+        }
+
+        .escalation-banner strong {
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid #26262e;
+            margin: 25px 0;
+        }
+
+        .ticket-card h2 {
+            font-size: 18px;
+            margin-bottom: 16px;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 13px 15px;
+            box-sizing: border-box;
+            background: #ffffff;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            color: #1e1e2f;
+            outline: none;
+            font-size: 14px;
+            font-family: inherit;
+            resize: vertical;
+            margin-bottom: 18px;
+        }
+
+        textarea:focus {
+            border-color: #ed111c;
+        }
+
+        select {
+            padding: 10px 12px;
+            border-radius: 8px;
+            border: 1px solid #35353d;
+            background: #ffffff;
+            color: #1e1e2f;
+            font-size: 14px;
+            margin-bottom: 18px;
+        }
+
+        label.field-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 700;
+            color: #d8d8df;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 14px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 14px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 800;
+            font-size: 14px;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: #ed111c;
+            color: #1e1e2f;
+        }
+
+        .btn-primary:hover {
+            background: #ff1c27;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid #35353d;
+            color: #1e1e2f;
+        }
+
+        .btn-secondary:hover {
+            border-color: #ed111c;
+            color: #ed111c;
+        }
+
+        .btn-warning {
+            background: #d97706;
+            color: #ffffff;
+        }
+
+        .btn-warning:hover {
+            opacity: 0.9;
+        }
+
+        .btn-success {
+            background: #16a34a;
+            color: #ffffff;
+        }
+
+        .btn-success:hover {
+            opacity: 0.9;
+        }
+
+        /* ---- Conversation ---- */
+
+        .conversation {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .conversation-entry {
+            max-width: 85%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 14px;
+        }
+
+        .conversation-staff {
+            align-self: flex-end;
+            background: rgba(79,70,229,0.1);
+            border: 1px solid rgba(79,70,229,0.3);
+            border-bottom-right-radius: 4px;
+        }
+
+        .conversation-customer {
+            align-self: flex-start;
+            background: #f6f6f9;
+            border: 1px solid #e4e4ea;
+            border-bottom-left-radius: 4px;
+        }
+
+        .conversation-meta {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #8a8a95;
+            margin-bottom: 5px;
+        }
+
+        .conversation-empty {
+            color: #8a8a95;
+            font-size: 14px;
+            padding: 8px 0;
+        }
+
+        .activity-list {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 24px;
+            border-left: 2px solid #ed111c;
+        }
+
+        .activity-list li {
+            padding: 10px 0 10px 18px;
+            display: grid;
+            gap: 4px;
+        }
+
+        .activity-list small {
+            color: #8a8a95;
+        }
+
+        /* ---- Attachments ---- */
+
+        .attachment-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 11px 14px;
+            border: 1px solid #e4e4ea;
+            border-radius: 10px;
+            background: #f6f6f9;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+
+        .attachment-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            color: #1e1e2f;
+            min-width: 0;
+        }
+
+        .attachment-name {
+            font-weight: 700;
+            word-break: break-all;
+        }
+
+        .attachment-meta {
+            color: #8a8a95;
+            font-size: 12px;
+        }
+
+        .attachment-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .attachment-download {
+            padding: 7px 14px;
+            border-radius: 6px;
+            background: #4f46e5;
+            color: #ffffff;
+            font-size: 13px;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .attachment-download:hover {
+            opacity: 0.9;
+        }
+
+        .attachment-delete {
+            padding: 7px 14px;
+            border-radius: 6px;
+            background: rgba(237,17,28,0.12);
+            color: #dc2626;
+            border: none;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .attachment-delete:hover {
+            background: rgba(237,17,28,0.22);
+        }
+
+        .attachment-empty {
+            color: #8a8a95;
+            font-size: 14px;
+            padding: 8px 0;
+        }
+
+        input[type="file"] {
+            font-size: 14px;
+            margin-bottom: 14px;
+            color: #1e1e2f;
+        }
+
+        .action-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            margin-bottom: 8px;
+        }
+
+        .action-box {
+            border: 1px solid #e4e4ea;
+            border-radius: 10px;
+            padding: 16px;
+            background: #f6f6f9;
+        }
+
+        .action-box h3 {
+            margin: 0 0 12px;
+            font-size: 14px;
+            color: #1e1e2f;
+        }
+
+        .action-box .btn {
+            width: 100%;
+            flex: none;
+        }
+
+        input[type="text"].text-input {
+            width: 100%;
+            padding: 10px 12px;
+            box-sizing: border-box;
+            border: 1px solid #35353d;
+            border-radius: 8px;
+            background: #ffffff;
+            color: #1e1e2f;
+            font-size: 14px;
+            margin-bottom: 14px;
+        }
+
+        .char-counter {
+            display: block;
+            text-align: right;
+            font-size: 12px;
+            color: #8a8a95;
+            margin-top: 5px;
+        }
+
+        @media (max-width: 640px) {
+            .detail-grid { grid-template-columns: 1fr; }
+            .action-grid { grid-template-columns: 1fr; }
+            .ticket-card { padding: 26px; }
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div th:replace="~{navbar :: navbar}"></div>
+
+<section class="form-page">
+
+    <div class="ticket-card">
+
+        <h1>Ticket #<span th:text="${ticket.id}">1</span></h1>
+
+        <div th:if="${error}"
+             style="background: rgba(237,17,28,0.12); color: #dc2626; border: 1px solid rgba(237,17,28,0.4); padding: 12px 15px; border-radius: 8px; margin-bottom: 20px; text-align: center; font-weight: 700;"
+             th:text="${error}">Error</div>
+
+        <div th:if="${success}"
+             style="background: rgba(34,197,94,0.12); color: #16a34a; border: 1px solid rgba(34,197,94,0.4); padding: 12px 15px; border-radius: 8px; margin-bottom: 20px; text-align: center; font-weight: 700;"
+             th:text="${success}">Success</div>
+
+        <div th:if="${emailWarning}"
+             style="background: rgba(245,158,11,0.15); color: #92400e; border: 1px solid rgba(245,158,11,0.4); padding: 12px 15px; border-radius: 8px; margin-bottom: 20px; text-align: center; font-weight: 700;"
+             th:text="${emailWarning}">Email warning</div>
+
+        <div class="escalation-banner" th:if="${ticket.escalated}">
+            <strong>
+                <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
+                Escalated ticket
+            </strong>
+            <span th:if="${ticket.escalationReason != null and !ticket.escalationReason.isEmpty()}"
+                  th:text="${ticket.escalationReason}">Reason</span>
+            <span th:if="${ticket.escalatedBy != null and !ticket.escalatedBy.isEmpty()}">
+                by <span th:text="${ticket.escalatedBy}">Staff</span>
+            </span>
+            <span th:if="${ticket.escalatedAtDisplay != '-'}"
+                  th:text="' at ' + ${ticket.escalatedAtDisplay}"></span>
+        </div>
+
+        <div class="detail-grid">
+
+            <div class="detail">
+                <strong>Customer Name</strong>
+                <span th:text="${ticket.customerName}">John</span>
+            </div>
+
+            <div class="detail">
+                <strong>Email</strong>
+                <span th:text="${ticket.email}">john@gmail.com</span>
+            </div>
+
+            <div class="detail">
+                <strong>Customer ID</strong>
+                <span th:text="${ticket.customerId != null} ? ${ticket.customerId} : '-'">1</span>
+            </div>
+
+            <div class="detail">
+                <strong>Subject</strong>
+                <span th:text="${ticket.subject}">Booking Issue</span>
+            </div>
+
+            <div class="detail">
+                <strong>Status</strong>
+                <span class="status-badge"
+                      th:classappend="${ticket.status == 'IN_PROGRESS'} ? 'inprogress' : (${ticket.status == 'RESOLVED'} ? 'resolved' : '')"
+                      th:text="${ticket.status}">OPEN</span>
+            </div>
+
+            <div class="detail">
+                <strong>Priority</strong>
+                <span class="priority-badge"
+                      th:classappend="${ticket.priority == 'LOW'} ? 'low' : (${ticket.priority == 'HIGH'} ? 'high' : (${ticket.priority == 'URGENT'} ? 'urgent' : 'medium'))"
+                      th:text="${ticket.priorityDisplay}">Medium</span>
+            </div>
+
+            <div class="detail">
+                <strong>Category</strong>
+                <span class="category-badge"
+                      th:text="${ticket.categoryDisplay}">Other</span>
+            </div>
+
+            <div class="detail">
+                <strong>Verified Booking ID</strong>
+                <span th:text="${ticket.bookingId != null} ? ${ticket.bookingId} : 'Not linked'">Not linked</span>
+            </div>
+
+            <div class="detail">
+                <strong>Assigned Staff</strong>
+                <span th:text="${ticket.assignedStaffName != null} ? ${ticket.assignedStaffName} : 'Unassigned'">Unassigned</span>
+            </div>
+
+            <div class="detail">
+                <strong>First Response Deadline</strong>
+                <span th:text="${ticket.responseDeadlineDisplay}">-</span>
+                <span th:if="${ticket.responseSlaOverdue}" class="status-badge urgent">Overdue</span>
+            </div>
+
+            <div class="detail">
+                <strong>Resolution Deadline</strong>
+                <span th:text="${ticket.resolutionDeadlineDisplay}">-</span>
+                <span th:if="${ticket.resolutionSlaOverdue}" class="status-badge urgent">Overdue</span>
+            </div>
+
+            <div class="detail" th:if="${ticket.category == 'REFUND_REQUEST' or ticket.bookingId != null}">
+                <strong>Refund Tracking</strong>
+                <span th:text="${ticket.refundTrackingStatus}">NOT_REQUESTED</span>
+            </div>
+
+            <div class="detail">
+                <strong>First Response</strong>
+                <span th:text="${ticket.firstResponseAtDisplay}">-</span>
+            </div>
+
+            <div class="detail">
+                <strong>Created</strong>
+                <span th:text="${ticket.createdAtDisplay}">-</span>
+            </div>
+
+            <div class="detail">
+                <strong>Last Updated</strong>
+                <span th:text="${ticket.updatedAtDisplay}">-</span>
+            </div>
+
+            <div class="detail" th:if="${ticket.resolvedAt > 0}">
+                <strong>Resolved</strong>
+                <span th:text="${ticket.resolvedAtDisplay}">-</span>
+            </div>
+
+            <div class="detail" th:if="${ticket.feedbackRating != null}">
+                <strong>Customer Rating</strong>
+                <span th:text="${ticket.feedbackRating} + ' / 5'">5 / 5</span>
+            </div>
+
+        </div>
+
+        <div class="detail">
+            <strong>Customer Message</strong>
+            <div class="message" th:text="${ticket.message}">Customer issue</div>
+        </div>
+
+        <div class="detail" th:if="${linkedBooking != null}">
+            <strong>Verified Booking</strong>
+            <div class="message">
+                <span th:text="'Booking #' + ${linkedBooking.id} + ' · ' + ${linkedBooking.movieTitle}">Booking details</span><br>
+                <span th:text="${linkedBooking.date} + ' · ' + ${linkedBooking.showTime}">Showtime</span><br>
+                <span th:text="'Booking status: ' + ${linkedBooking.status}">Status</span><br>
+                <span th:text="${linkedPayment == null} ? 'No payment record' : 'Payment status: ' + ${linkedPayment.status}">Payment status</span>
+                <span th:if="${linkedPayment != null and linkedPayment.refundAmount > 0}"
+                      th:text="' · Recorded refund: LKR ' + ${linkedPayment.refundAmount}">Refund amount</span>
+            </div>
+        </div>
+
+        <div class="detail" th:if="${ticket.feedbackComment != null and !ticket.feedbackComment.isEmpty()}">
+            <strong>Customer Feedback</strong>
+            <div class="message" th:text="${ticket.feedbackComment}">Feedback</div>
+        </div>
+
+        <hr>
+
+        <h2>Assignment</h2>
+        <form th:if="${ticket.status != 'RESOLVED'}"
+              th:action="@{/support/tickets/assign}" method="post" class="action-box">
+            <input type="hidden" name="id" th:value="${ticket.id}">
+            <label class="field-label" for="assignedStaffId">Assign to active support staff</label>
+            <select id="assignedStaffId" name="assignedStaffId">
+                <option value="">Unassigned</option>
+                <option th:each="staff : ${staffMembers}"
+                        th:value="${staff.id}"
+                        th:selected="${ticket.assignedStaffId == staff.id}"
+                        th:text="${staff.name + ' (' + staff.email + ')'}">Support staff</option>
+            </select>
+            <button type="submit" class="btn btn-secondary">Save Assignment</button>
+        </form>
+
+        <section th:if="${ticket.bookingId != null}" class="action-box">
+            <h2>Refund Tracking</h2>
+            <p>Support tracks progress here. Actual refund processing remains with the Cashier.</p>
+            <form th:if="${not #lists.isEmpty(refundStatuses)}"
+                  th:action="@{/support/tickets/refund-tracking}" method="post">
+                <input type="hidden" name="id" th:value="${ticket.id}">
+                <label class="field-label" for="refundTrackingStatus">Refund status</label>
+                <select id="refundTrackingStatus" name="refundTrackingStatus">
+                    <option th:each="refundStatus : ${refundStatuses}"
+                            th:value="${refundStatus}"
+                            th:selected="${ticket.refundTrackingStatus == refundStatus}"
+                            th:text="${refundStatus}">REQUESTED</option>
+                </select>
+                <button type="submit" class="btn btn-secondary">Update Refund Tracking</button>
+            </form>
+            <p th:if="${#lists.isEmpty(refundStatuses)}">This refund request is in a terminal state.</p>
+        </section>
+
+        <hr>
+
+        <h2>Ticket Activity Timeline</h2>
+        <ol class="activity-list">
+            <li th:each="activity : ${activities}">
+                <strong th:text="${activity.eventType}">EVENT</strong>
+                <span th:text="${activity.description}">Activity</span>
+                <small th:text="${activity.actorName + ' · ' + activity.createdAtDisplay}">Actor · time</small>
+            </li>
+            <li th:if="${#lists.isEmpty(activities)}">No activity recorded yet.</li>
+        </ol>
+
+        <h2>Internal Staff Notes</h2>
+        <div class="conversation-entry" th:each="internalNote : ${internalNotes}">
+            <div class="conversation-meta"
+                 th:text="${internalNote.authorName} + ' · ' + ${internalNote.createdAtDisplay}">Staff · time</div>
+            <div class="message" th:text="${internalNote.note}">Internal note</div>
+        </div>
+        <div class="conversation-empty" th:if="${#lists.isEmpty(internalNotes)}">
+            No internal notes.
+        </div>
+        <form th:action="@{/support/tickets/note}" method="post">
+            <input type="hidden" name="id" th:value="${ticket.id}">
+            <label class="field-label" for="internalNote">Add a private staff note</label>
+            <textarea id="internalNote" name="note" maxlength="2000"
+                      placeholder="Visible to support staff only" required></textarea>
+            <button type="submit" class="btn btn-secondary">Add Internal Note</button>
+        </form>
+
+        <hr>
+
+        <h2>FAQ &amp; Quick Replies</h2>
+        <div th:each="faq : ${faqs}" class="conversation-entry">
+            <strong th:text="${faq.key}">Frequently asked question</strong>
+            <div th:text="${faq.value}">FAQ answer</div>
+        </div>
+
+        <hr>
+
+        <h2><i class="fa-solid fa-comments" aria-hidden="true"></i> Conversation</h2>
+
+        <div class="conversation">
+
+            <div class="conversation-entry conversation-customer">
+                <div class="conversation-meta"
+                     th:text="${ticket.customerName} + ' (Customer) · ' + ${ticket.createdAtDisplay}">Customer</div>
+                <div th:text="${ticket.message}">Original message</div>
+            </div>
+
+            <div class="conversation-entry"
+                 th:each="reply : ${replies}"
+                 th:classappend="${reply.fromStaff} ? 'conversation-staff' : 'conversation-customer'">
+                <div class="conversation-meta"
+                     th:text="${reply.senderName} +
+                             (${reply.fromStaff} ? ' (Support)' : ' (Customer)') +
+                             ' · ' + ${reply.createdAtDisplay}">Reply</div>
+                <div th:text="${reply.message}">Reply message</div>
+            </div>
+
+            <div class="conversation-empty" th:if="${#lists.isEmpty(replies)}">
+                No replies yet. Use the form below to respond.
+            </div>
+
+        </div>
+
+        <h2>Reply to Customer</h2>
+
+        <form th:action="@{/support/tickets/reply}"
+              method="post"
+              data-lock-submit>
+
+            <input type="hidden"
+                   name="id"
+                   th:value="${ticket.id}">
+
+            <label class="field-label" for="quickReply">Insert quick reply</label>
+            <select id="quickReply">
+                <option value="">Choose a quick reply</option>
+                <option th:each="quickReply : ${quickReplies}"
+                        th:value="${quickReply.value}"
+                        th:text="${quickReply.key}">Reply template</option>
+            </select>
+            <label class="field-label" for="replyMessage">Message</label>
+            <textarea id="replyMessage"
+                      name="message"
+                      placeholder="Enter your reply (10 - 2000 characters)..."
+                      minlength="10"
+                      maxlength="2000"
+                      data-counter="#replyCounter"
+                      required></textarea>
+            <span class="char-counter" id="replyCounter">0 / 2000</span>
+
+            <label class="field-label" for="replyStatus">Change status (optional)</label>
+            <select id="replyStatus" name="status">
+                <option value="">Keep current status</option>
+                <option value="OPEN">Open</option>
+                <option value="IN_PROGRESS">In Progress</option>
+                <option value="RESOLVED">Resolved</option>
+            </select>
+
+            <div class="form-actions">
+                <a href="/support/tickets" class="btn btn-secondary">Back to Tickets</a>
+                <button type="submit" class="btn btn-primary">Send Reply</button>
+            </div>
+
+        </form>
+
+        <hr>
+
+        <h2>Ticket Actions</h2>
+
+        <div class="action-grid">
+
+            <form class="action-box"
+                  th:action="@{/support/tickets/escalate}"
+                  method="post"
+                  th:if="${ticket.status != 'RESOLVED'}">
+
+                <h3><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> Escalate</h3>
+
+                <input type="hidden"
+                       name="id"
+                       th:value="${ticket.id}">
+
+                <input type="text"
+                       class="text-input"
+                       name="reason"
+                       placeholder="Reason for escalation (required)"
+                       minlength="5"
+                       maxlength="500"
+                       required>
+
+                <button type="submit"
+                        class="btn btn-warning"
+                        onclick="return confirm('Escalate this ticket? Priority will be raised.')">
+                    Escalate Ticket
+                </button>
+
+            </form>
+
+            <form class="action-box"
+                  th:action="@{/support/tickets/priority}"
+                  method="post"
+                  th:if="${ticket.status != 'RESOLVED'}">
+
+                <h3><i class="fa-solid fa-signal" aria-hidden="true"></i> Change Priority</h3>
+
+                <input type="hidden"
+                       name="id"
+                       th:value="${ticket.id}">
+
+                <select name="priority">
+                    <option value="LOW" th:selected="${ticket.priority == 'LOW'}">Low</option>
+                    <option value="MEDIUM" th:selected="${ticket.priority == 'MEDIUM'}">Medium</option>
+                    <option value="HIGH" th:selected="${ticket.priority == 'HIGH'}">High</option>
+                    <option value="URGENT" th:selected="${ticket.priority == 'URGENT'}">Urgent</option>
+                </select>
+
+                <button type="submit" class="btn btn-secondary">Set Priority</button>
+
+            </form>
+
+            <form class="action-box"
+                  th:action="@{/support/tickets/reopen}"
+                  method="post"
+                  th:if="${ticket.status == 'RESOLVED'}">
+
+                <h3><i class="fa-solid fa-rotate-left" aria-hidden="true"></i> Reopen</h3>
+
+                <input type="hidden"
+                       name="id"
+                       th:value="${ticket.id}">
+
+                <button type="submit"
+                        class="btn btn-secondary"
+                        onclick="return confirm('Reopen this ticket as In Progress?')">
+                    Reopen Ticket
+                </button>
+
+            </form>
+
+            <form class="action-box"
+                  th:action="@{/support/tickets/respond}"
+                  method="post"
+                  data-lock-submit>
+
+                <h3><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Respond &amp; Resolve</h3>
+
+                <input type="hidden"
+                       name="id"
+                       th:value="${ticket.id}">
+
+                <textarea name="response"
+                          placeholder="Final response to the customer (10 - 2000 characters)..."
+                          minlength="10"
+                          maxlength="2000"
+                          data-counter="#resolveCounter"
+                          required></textarea>
+                <span class="char-counter" id="resolveCounter">0 / 2000</span>
+
+                <input type="hidden"
+                       name="status"
+                       value="RESOLVED">
+
+                <button type="submit" class="btn btn-success">Resolve Ticket</button>
+
+            </form>
+
+        </div>
+
+        <hr>
+
+        <h2><i class="fa-solid fa-paperclip" aria-hidden="true"></i> Attachments</h2>
+
+        <div th:if="${not #lists.isEmpty(attachments)}">
+
+            <div class="attachment-row" th:each="attachment : ${attachments}">
+
+                <div class="attachment-info">
+                    <i class="fa-solid fa-file" aria-hidden="true"></i>
+                    <span class="attachment-name" th:text="${attachment.fileName}">file.png</span>
+                    <span class="attachment-meta"
+                          th:text="${attachment.fileSizeDisplay} + ' · ' + ${attachment.contentType}">10 KB</span>
+                </div>
+
+                <div class="attachment-actions">
+
+                    <a class="attachment-download"
+                       th:href="@{/support/attachments(id=${attachment.id})}"
+                       th:download="${attachment.fileName}">
+                        Download
+                    </a>
+
+                    <form th:action="@{/support/tickets/attachment/delete}"
+                          method="post">
+
+                        <input type="hidden"
+                               name="attachmentId"
+                               th:value="${attachment.id}">
+
+                        <input type="hidden"
+                               name="ticketId"
+                               th:value="${ticket.id}">
+
+                        <button type="submit"
+                                class="attachment-delete"
+                                onclick="return confirm('Delete this attachment?')">
+                            Delete
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="attachment-empty" th:if="${#lists.isEmpty(attachments)}">
+            No attachments on this ticket yet.
+        </div>
+
+        <form th:action="@{/support/tickets/attach}"
+              method="post"
+              enctype="multipart/form-data"
+              class="attachment-upload-form"
+              th:if="${ticket.status != 'RESOLVED'}">
+
+            <input type="hidden"
+                   name="id"
+                   th:value="${ticket.id}">
+
+            <label class="field-label" for="attachmentFile">Upload attachment</label>
+            <input type="file"
+                   id="attachmentFile"
+                   name="file"
+                   accept=".jpg,.jpeg,.png,.pdf"
+                   required>
+
+            <div style="color: #8a8a95; font-size: 12px; margin-bottom: 14px;">
+                Allowed: JPG, JPEG, PNG, PDF - max 5 MB.
+            </div>
+
+            <button type="submit" class="btn btn-secondary">Upload Attachment</button>
+
+        </form>
+
+        <script>
+            (function () {
+                document.querySelectorAll('textarea[data-counter]').forEach(function (area) {
+                    var target = document.querySelector(area.getAttribute('data-counter'));
+                    function update() {
+                        if (target) {
+                            target.textContent = area.value.length + ' / 2000';
+                        }
+                    }
+                    area.addEventListener('input', update);
+                    update();
+                });
+
+                document.querySelectorAll('form[data-lock-submit]').forEach(function (form) {
+                    form.addEventListener('submit', function () {
+                        form.querySelectorAll('button[type="submit"]')
+                            .forEach(function (btn) { btn.disabled = true; });
+                    });
+                });
+
+                var quickReply = document.getElementById('quickReply');
+                var replyMessage = document.getElementById('replyMessage');
+                if (quickReply && replyMessage) {
+                    quickReply.addEventListener('change', function () {
+                        if (quickReply.value) {
+                            replyMessage.value = quickReply.value;
+                            replyMessage.dispatchEvent(new Event('input', { bubbles: true }));
+                        }
+                    });
+                }
+            })();
+        </script>
+
+    </div>
+
+</section>
+
+<div th:replace="~{footer :: footer}"></div>
+
+</body>
+</html>

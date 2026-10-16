@@ -1,0 +1,380 @@
+﻿<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>Admin Dashboard - CineBook</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+
+    <style>
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6fb;
+            color: #1e1e2f;
+        }
+
+        .navbar {
+            background: #ffffff;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar h2 {
+            margin: 0;
+        }
+
+        .logout {
+            color: #ff5555;
+            text-decoration: none;
+        }
+
+        .container {
+            padding: 40px;
+        }
+
+        .welcome {
+            color: #5f6b7a;
+            margin-bottom: 30px;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .card {
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 10px;
+            border: 1px solid #293550;
+        }
+
+        .card h3 {
+            margin-top: 0;
+            font-size: 20px;
+        }
+
+        .count {
+            font-size: 32px;
+            font-weight: bold;
+            margin: 15px 0;
+            color: #ff6b72;
+        }
+
+        .button {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 10px 18px;
+            background: #ed0712;
+            color: #1e1e2f;
+            text-decoration: none;
+            border-radius: 6px;
+        }
+
+        .button:hover {
+            opacity: 0.85;
+        }
+
+        .security {
+            color: #22c55e;
+            font-weight: bold;
+        }
+
+        .online {
+            color: #22c55e;
+            font-weight: bold;
+        }
+
+        @media (max-width: 900px) {
+
+            .cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+        }
+
+        @media (max-width: 600px) {
+
+            .cards {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                padding: 20px;
+            }
+
+            .navbar {
+                padding: 20px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+
+<!-- =========================
+     NAVBAR
+========================= -->
+
+<div th:replace="~{navbar :: navbar}"></div>
+
+
+<!-- =========================
+     MAIN CONTAINER
+========================= -->
+
+<div class="container">
+
+    <h1>System Admin Dashboard</h1>
+
+    <p class="welcome">
+        Welcome to CineBook System Management.
+    </p>
+
+
+    <!-- =========================
+         DASHBOARD CARDS
+    ========================= -->
+
+    <div class="cards">
+
+
+        <!-- USERS -->
+
+        <div class="card">
+
+            <h3><i class="fa-solid fa-users" aria-hidden="true"></i> Users</h3>
+
+            <div class="count"
+                 th:text="${userCount}">
+
+                0
+
+            </div>
+
+            <p>
+                Total registered users
+            </p>
+
+            <a href="/admin/users"
+               class="button">
+
+                Manage Users
+
+            </a>
+
+        </div>
+
+
+        <!-- MOVIES -->
+
+        <div class="card">
+
+            <h3><i class="fa-solid fa-film" aria-hidden="true"></i> Movies</h3>
+
+            <div class="count"
+                 th:text="${movieCount}">
+
+                0
+
+            </div>
+
+            <p>
+                Total movies
+            </p>
+
+            <a href="/admin/movies"
+               class="button">
+
+                Manage Movies
+
+            </a>
+
+        </div>
+
+
+        <!-- THEATRES -->
+
+        <div class="card">
+
+            <h3><i class="fa-solid fa-building" aria-hidden="true"></i> Theatres</h3>
+
+            <div class="count"
+                 th:text="${theatreCount}">
+
+                0
+
+            </div>
+
+            <p>
+                Total theatres
+            </p>
+
+            <a href="/admin/theatres"
+               class="button">
+
+                Manage Theatres
+
+            </a>
+
+        </div>
+
+
+        <!-- BOOKINGS -->
+
+        <div class="card">
+
+            <h3><i class="fa-solid fa-ticket" aria-hidden="true"></i> Bookings</h3>
+
+            <div class="count"
+                 th:text="${bookingCount}">
+
+                0
+
+            </div>
+
+            <p>
+                Total bookings
+            </p>
+
+            <a href="/my-bookings"
+               class="button">
+
+                View Bookings
+
+            </a>
+
+        </div>
+
+
+        <!-- PAYMENTS -->
+
+        <div class="card">
+
+            <h3><i class="fa-solid fa-credit-card" aria-hidden="true"></i> Payments</h3>
+
+            <div class="count"
+                 th:text="${paymentCount}">
+
+                0
+
+            </div>
+
+            <p>
+                Total payment transactions
+            </p>
+
+            <a href="/cashier/transactions"
+               class="button">
+
+                View Payments
+
+            </a>
+
+        </div>
+
+
+        <!-- SECURITY -->
+
+        <div class="card">
+
+            <h3><i class="fa-solid fa-lock" aria-hidden="true"></i> Security</h3>
+
+            <p class="security">
+                Role-Based Access
+            </p>
+
+            <p>
+                Users can be assigned different
+                system roles.
+            </p>
+
+            <a href="/admin/users"
+               class="button">
+
+                Manage Roles
+
+            </a>
+
+        </div>
+
+
+        <!-- SYSTEM -->
+
+        <div class="card">
+
+            <h3><i class="fa-solid fa-box-archive" aria-hidden="true"></i> System</h3>
+
+            <p>
+                System Status:
+                <span class="online">
+                    ONLINE
+                </span>
+            </p>
+
+            <p>
+                CineBook system is running normally.
+            </p>
+
+            <a href="/"
+               class="button">
+
+                Go to System
+
+            </a>
+
+            <a href="/admin/backup"
+               class="button"
+               style="background:#16a34a; margin-top:10px;">
+
+                <i class="fa-solid fa-download" aria-hidden="true"></i> Backup Database
+
+            </a>
+
+        </div>
+
+
+        <!-- CASHIER -->
+
+        <div class="card">
+
+            <h3><i class="fa-solid fa-money-bill-wave" aria-hidden="true"></i> Cashier</h3>
+
+            <p>
+                Manage payments, tickets and refunds.
+            </p>
+
+            <a href="/cashier"
+               class="button">
+
+                Open Cashier
+
+            </a>
+
+        </div>
+
+
+    </div>
+
+</div>
+
+<div th:replace="~{footer :: footer}"></div>
+</body>
+
+</html>
+
+
+
+

@@ -1,0 +1,262 @@
+﻿<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>Edit Movie - Admin</title>
+    <link rel="stylesheet" href="/css/style.css">
+
+    <style>
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6fb;
+            color: #1e1e2f;
+        }
+
+        .container {
+            width: 600px;
+            max-width: 90%;
+            margin: 40px auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: #e50914;
+            margin-bottom: 30px;
+        }
+
+        .form-box {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 30px;
+        }
+
+        .field {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            color: #5f6b7a;
+            margin-bottom: 8px;
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 12px;
+            background: #ffffff;
+            color: #1e1e2f;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-family: Arial, sans-serif;
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        input:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #e50914;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 13px;
+            background: #ed0712;
+            color: #1e1e2f;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .submit-btn:hover {
+            background: #b8050e;
+        }
+
+        .back {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: #5f6b7a;
+            text-decoration: none;
+        }
+
+        .back:hover {
+            color: #1e1e2f;
+        }
+
+        .current-poster {
+            display: block;
+            width: 120px;
+            height: 170px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin: 10px auto 20px;
+            border: 2px solid #333;
+        }
+
+    </style>
+
+</head>
+
+<body>
+<div th:replace="~{navbar :: navbar}"></div>
+
+<div class="container">
+
+    <h1><i class="fa-solid fa-pen-to-square" aria-hidden="true"></i> Edit Movie</h1>
+
+    <div class="form-box">
+
+        <form action="/admin/movies/edit"
+              method="post">
+
+
+            <!-- MOVIE ID -->
+
+            <input type="hidden"
+                   name="id"
+                   th:value="${movie.id}">
+
+
+            <!-- CURRENT POSTER -->
+
+              <img th:if="${movie.posterUrl != null and !movie.posterUrl.isEmpty()}"
+                  class="current-poster"
+                  th:src="${movie.posterUrl.startsWith('http://') or movie.posterUrl.startsWith('https://') or movie.posterUrl.startsWith('/') ? movie.posterUrl : '/images/' + movie.posterUrl}"
+                  th:alt="${movie.title}">
+              <div th:unless="${movie.posterUrl != null and !movie.posterUrl.isEmpty()}"
+                  class="current-poster poster-placeholder-small"
+                  aria-label="No poster available">MOVIE</div>
+
+
+            <!-- MOVIE TITLE -->
+
+            <div class="field">
+
+                <label>
+                    Movie Title
+                </label>
+
+                <input type="text"
+                       name="title"
+                       th:value="${movie.title}"
+                       placeholder="Enter movie title"
+                       required>
+
+            </div>
+
+
+            <!-- GENRE -->
+
+            <div class="field">
+
+                <label>
+                    Genre
+                </label>
+
+                <input type="text"
+                       name="genre"
+                       th:value="${movie.genre}"
+                       placeholder="Example: Action â€¢ Adventure"
+                       required>
+
+            </div>
+
+
+            <!-- DESCRIPTION -->
+
+            <div class="field">
+
+                <label>
+                    Description
+                </label>
+
+                <textarea name="description"
+                          th:text="${movie.description}"
+                          placeholder="Enter movie description"
+                          required></textarea>
+
+            </div>
+
+
+            <!-- POSTER URL -->
+
+            <div class="field">
+
+                <label>
+                    Poster URL
+                </label>
+
+                <input type="url"
+                       name="posterUrl"
+                       th:value="${movie.posterUrl}"
+                       placeholder="https://example.com/movie-poster.jpg"
+                       required>
+
+            </div>
+
+
+            <!-- RATING -->
+
+            <div class="field">
+
+                <label>
+                    Rating
+                </label>
+
+                <input type="number"
+                       name="rating"
+                       min="0"
+                       max="10"
+                       step="0.1"
+                       th:value="${movie.rating}"
+                       placeholder="Example: 8.5"
+                       required>
+
+            </div>
+
+
+            <!-- UPDATE -->
+
+            <button type="submit"
+                    class="submit-btn">
+
+                <i class="fa-solid fa-floppy-disk" aria-hidden="true"></i> Update Movie
+
+            </button>
+
+        </form>
+
+
+        <a href="/admin/movies"
+           class="back">
+
+            <i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Back to Movie Management
+
+        </a>
+
+    </div>
+
+</div>
+
+<div th:replace="~{footer :: footer}"></div>
+</body>
+
+</html>
+
+
+
+

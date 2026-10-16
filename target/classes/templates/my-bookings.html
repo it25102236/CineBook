@@ -1,0 +1,469 @@
+﻿<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>My Bookings - MovieBook</title>
+
+    <link rel="stylesheet"
+          th:href="@{/css/style.css}">
+
+    <style>
+
+        /* ================= CANCEL BUTTON ================= */
+
+        .booking-actions {
+            margin-top: 20px;
+            text-align: right;
+        }
+
+        .cancel-button {
+            display: inline-block;
+            padding: 10px 18px;
+            background: #b91c1c;
+            color: #ffffff;
+            border: 0;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+
+        .cancel-button:hover {
+            background: #dc2626;
+        }
+
+        /* ================= STATUS ================= */
+
+        .booking-status {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .status-paid {
+            background: #166534;
+            color: #bbf7d0;
+        }
+
+        .status-locked {
+            background: #854d0e;
+            color: #fef08a;
+        }
+
+        .status-cancelled {
+            background: #7f1d1d;
+            color: #fecaca;
+        }
+
+        .status-refunded {
+            background: #374151;
+            color: #d1d5db;
+        }
+
+        .booking-notice {
+            max-width: 900px;
+            margin: 0 auto 20px;
+            padding: 14px 18px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .booking-notice.success {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .booking-notice.error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .booking-actions form {
+            display: inline-block;
+        }
+
+        .details-button {
+            display: inline-block;
+            margin-right: 8px;
+            padding: 10px 18px;
+            border: 1px solid #6c5ce7;
+            border-radius: 8px;
+            color: #4c3fc5;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- ================= NAVBAR ================= -->
+
+<div th:replace="~{navbar :: navbar}"></div>
+
+
+<!-- ================= MY BOOKINGS PAGE ================= -->
+
+<section class="movies-page">
+
+
+    <div class="movies-header">
+
+        <span class="section-label">
+
+            YOUR BOOKINGS
+
+        </span>
+
+
+        <h1>
+
+            My Bookings
+
+        </h1>
+
+
+        <p>
+
+            View your movie booking details below.
+
+        </p>
+
+    </div>
+
+    <div class="booking-notice success" th:if="${param.cancelled}">
+        Your booking was cancelled and its seats have been released.
+    </div>
+    <div class="booking-notice error"
+         th:if="${param.cancelError != null or param.error != null}">
+        This booking could not be accessed or cancelled. It may belong to another account or no longer be eligible.
+    </div>
+
+
+    <!-- ================= BOOKINGS ================= -->
+
+    <div class="booking-list">
+
+
+        <!-- ================= BOOKING CARD ================= -->
+
+        <div class="booking-card"
+             th:each="booking : ${bookings}">
+
+
+            <!-- ================= HEADER ================= -->
+
+            <div class="booking-card-header">
+
+
+                <div>
+
+                    <span class="booking-label">
+
+                        MOVIE TICKET
+
+                    </span>
+
+
+                    <h2 th:text="${booking.movieTitle}">
+
+                        Movie Title
+
+                    </h2>
+
+                </div>
+
+
+                <div class="booking-id">
+
+                    Booking #
+
+                    <span th:text="${booking.id}">
+
+                        1
+
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================= BOOKING DETAILS ================= -->
+
+            <div class="booking-details">
+
+
+                <!-- THEATRE -->
+
+                <div class="booking-detail">
+
+                    <span>
+
+                        <i class="fa-solid fa-film" aria-hidden="true"></i> Theatre
+
+                    </span>
+
+
+                    <strong th:text="${booking.theatre}">
+
+                        Jaffna Cinema
+
+                    </strong>
+
+                </div>
+
+                <div class="booking-detail">
+                    <span><i class="fa-solid fa-credit-card" aria-hidden="true"></i> Payment Status</span>
+                    <strong th:text="${paymentStatuses[booking.id]}">NOT PAID</strong>
+                </div>
+
+
+                <!-- DATE -->
+
+                <div class="booking-detail">
+
+                    <span>
+
+                        <i class="fa-solid fa-calendar-days" aria-hidden="true"></i> Date
+
+                    </span>
+
+
+                    <strong th:text="${booking.date}">
+
+                        2026-08-19
+
+                    </strong>
+
+                </div>
+
+
+                <!-- SHOW TIME -->
+
+                <div class="booking-detail">
+
+                    <span>
+
+                        <i class="fa-solid fa-clock" aria-hidden="true"></i> Show Time
+
+                    </span>
+
+
+                    <strong th:text="${booking.showTime}">
+
+                        7:30 PM
+
+                    </strong>
+
+                </div>
+
+
+                <!-- SEAT -->
+
+                <div class="booking-detail">
+
+                    <span>
+
+                        <i class="fa-solid fa-chair" aria-hidden="true"></i> Seat
+
+                    </span>
+
+
+                    <strong th:text="${booking.seatNumber}">
+
+                        A1
+
+                    </strong>
+
+                </div>
+
+
+                <!-- PRICE -->
+
+                <div class="booking-detail">
+
+                    <span>
+
+                        <i class="fa-solid fa-money-bill-wave" aria-hidden="true"></i> Ticket Price
+
+                    </span>
+
+
+                    <strong>
+
+                        LKR
+
+                        <span th:text="${booking.price}">
+
+                            1000
+
+                        </span>
+
+                    </strong>
+
+                </div>
+
+
+            </div>
+
+
+            <!-- ================= BOOKING STATUS ================= -->
+
+            <div>
+
+                <div class="refund-estimate"
+                     th:if="${booking.status == 'PAID' and paymentStatuses[booking.id] == 'SUCCESS'}">
+                    Cancellation refund: <strong th:text="|${booking.refundEstimatePercent}%|">75%</strong>
+                    (<strong>LKR <span th:text="${#numbers.formatDecimal(booking.refundEstimateAmount, 1, 2)}">750.00</span></strong>)
+                </div>
+
+                <div class="refund-estimate"
+                     th:if="${booking.status == 'PAID' and paymentStatuses[booking.id] == 'SIMULATED'}">
+                    Demo payment only: no real payment was charged, so no real refund is due.
+                </div>
+
+                <div class="refund-estimate"
+                     th:if="${(booking.status == 'CANCELLED' || booking.status == 'REFUNDED') and paymentStatuses[booking.id] == 'REFUNDED'}">
+                    Refund applied: <strong th:text="|${booking.refundPercent}%|">75%</strong>
+                    (<strong>LKR <span th:text="${#numbers.formatDecimal(booking.refundAmount, 1, 2)}">750.00</span></strong>)
+                </div>
+
+                <div class="refund-estimate"
+                     th:if="${booking.status == 'CANCELLED' and paymentStatuses[booking.id] == 'SIMULATED'}">
+                    This demo payment was not charged by a real provider, so no real refund was made.
+                </div>
+
+                <div class="refund-estimate"
+                     th:if="${booking.status == 'CANCELLED' and paymentStatuses[booking.id] == 'REFUND_SIMULATED'}">
+                    Simulated refund estimate: <strong th:text="|${booking.refundPercent}%|">75%</strong>
+                    (LKR <strong th:text="${#numbers.formatDecimal(booking.refundAmount, 1, 2)}">750.00</strong>).
+                    No payment provider processed this refund.
+                </div>
+
+                <span class="booking-status status-paid"
+                      th:if="${booking.status == 'PAID'}">
+
+                    PAID
+
+                </span>
+
+
+                <span class="booking-status status-locked"
+                      th:if="${booking.status == 'LOCKED'}">
+
+                    PAYMENT PENDING
+
+                </span>
+
+
+                <span class="booking-status status-cancelled"
+                      th:if="${booking.status == 'CANCELLED'}">
+
+                    CANCELLED
+
+                </span>
+
+
+                <span class="booking-status status-refunded"
+                      th:if="${booking.status == 'REFUNDED'}">
+
+                    REFUNDED
+
+                </span>
+                <span class="booking-status"
+                      th:if="${booking.status != 'PAID' and booking.status != 'LOCKED' and booking.status != 'CANCELLED' and booking.status != 'REFUNDED'}"
+                      th:text="${booking.status}">
+                    AVAILABLE
+                </span>
+
+            </div>
+
+
+            <!-- ================= CANCEL BOOKING ================= -->
+
+            <div class="booking-actions">
+
+                <a th:href="@{/booking/details(bookingId=${booking.id})}"
+                   class="details-button">View Details</a>
+
+                <form th:if="${booking.status == 'PAID' || booking.status == 'LOCKED'}"
+                      th:action="@{/booking/cancel(bookingId=${booking.id})}"
+                      method="post"
+                      onsubmit="return confirm('Are you sure you want to cancel this booking?');">
+                    <button type="submit" class="cancel-button">
+                        Cancel Booking
+                    </button>
+                </form>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- ================= NO BOOKINGS ================= -->
+
+        <div class="no-bookings"
+             th:if="${#lists.isEmpty(bookings)}">
+
+
+            <div class="no-bookings-icon">
+
+                <i class="fa-solid fa-film" aria-hidden="true"></i>
+
+            </div>
+
+
+            <h2>
+
+                No Bookings Yet
+
+            </h2>
+
+
+            <p>
+
+                You haven't booked any movie tickets yet.
+
+            </p>
+
+
+            <a href="/booking"
+               class="booking-button">
+
+                Book a Movie <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+
+            </a>
+
+
+        </div>
+
+
+    </div>
+
+</section>
+
+
+<!-- ================= FOOTER ================= -->
+
+<div th:replace="~{footer :: footer}"></div>
+
+
+</body>
+
+</html>

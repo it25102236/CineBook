@@ -1,0 +1,229 @@
+﻿<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>Add Showtime - CineBook</title>
+    <link rel="stylesheet" href="/css/style.css">
+
+    <style>
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6fb;
+            color: #1e1e2f;
+        }
+
+        .navbar {
+            background: #ffffff;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar h2 {
+            margin: 0;
+        }
+
+        .logout {
+            color: #ff5555;
+            text-decoration: none;
+        }
+
+        .container {
+            width: 500px;
+            margin: 50px auto;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+        }
+
+        h1 {
+            margin-top: 0;
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            margin-bottom: 7px;
+        }
+
+        input {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            background: #0f172a;
+            color: #1e1e2f;
+        }
+
+        input:focus {
+            outline: 2px solid #2563eb;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 11px 20px;
+            background: #2563eb;
+            color: #1e1e2f;
+            text-decoration: none;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 25px;
+        }
+
+        .button:hover {
+            opacity: 0.85;
+        }
+
+        .back {
+            background: #374151;
+            margin-left: 8px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+
+<!-- NAVBAR -->
+
+<div th:replace="~{navbar :: navbar}"></div>
+
+
+<!-- FORM -->
+
+<div class="container">
+
+    <h1><i class="fa-solid fa-plus" aria-hidden="true"></i> Add Showtime</h1>
+
+
+    <form th:action="@{/theatre-manager/showtimes/add}"
+          th:object="${showtime}"
+          method="post">
+
+
+        <!-- MOVIE ID -->
+
+        <label>
+            Movie ID
+        </label>
+
+        <input type="number"
+               th:field="*{movieId}"
+               placeholder="Enter movie ID"
+               required>
+
+
+        <!-- MOVIE TITLE -->
+
+        <label>
+            Movie Title
+        </label>
+
+        <input type="text"
+               th:field="*{movieTitle}"
+               placeholder="Enter movie title"
+               required>
+
+
+        <!-- THEATRE -->
+
+        <label>
+            Theatre
+        </label>
+
+        <input type="text"
+               th:field="*{theatre}"
+               placeholder="Enter theatre name"
+               required>
+
+
+        <!-- DATE -->
+
+        <label>
+            Date
+        </label>
+
+        <input type="date"
+               th:field="*{date}"
+               required>
+
+
+        <!-- SHOW TIME -->
+
+        <label>
+            Show Time
+        </label>
+
+        <input type="text"
+               th:field="*{showTime}"
+               placeholder="Example: 06:30 PM"
+               required>
+
+
+        <!-- TOTAL SEATS -->
+
+        <label>
+            Total Seats
+        </label>
+
+        <input type="number"
+               th:field="*{totalSeats}"
+               min="1"
+               placeholder="Enter total seats"
+               required>
+
+
+        <!-- AVAILABLE SEATS -->
+
+        <label>
+            Available Seats
+        </label>
+
+        <input type="number"
+               th:field="*{availableSeats}"
+               min="0"
+               placeholder="Enter available seats"
+               required>
+
+
+        <!-- BUTTONS -->
+
+        <button type="submit"
+                class="button">
+
+            Add Showtime
+
+        </button>
+
+
+        <a href="/theatre-manager/showtimes"
+           class="button back">
+
+            Cancel
+
+        </a>
+
+    </form>
+
+</div>
+
+<div th:replace="~{footer :: footer}"></div>
+</body>
+
+</html>
+
+
+
+

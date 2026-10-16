@@ -1,0 +1,514 @@
+﻿<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Movie Showtimes - MovieBook</title>
+    <link rel="stylesheet" href="/css/style.css">
+
+    <style>
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6fb;
+            color: #1e1e2f;
+        }
+
+        .navbar {
+            background: #ffffff;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar h2 {
+            margin: 0;
+        }
+
+        .home {
+            color: #1e1e2f;
+            text-decoration: none;
+        }
+
+        .container {
+            padding: 40px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .movie-info {
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+
+        .movie-info h1 {
+            margin-top: 0;
+        }
+
+        .genre {
+            color: #ff6b72;
+        }
+
+        .rating-line {
+            margin-top: 12px;
+            color: #f5c518;
+            font-weight: bold;
+            font-size: 15px;
+        }
+
+        .showtime-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: 25px;
+        }
+
+        .showtime-card {
+            background: #ffffff;
+            border: 1px solid #293550;
+            padding: 25px;
+            border-radius: 12px;
+        }
+
+        .showtime-card h3 {
+            margin-top: 0;
+        }
+
+        .detail {
+            margin: 10px 0;
+            color: #d1d5db;
+        }
+
+        .label {
+            color: #ff6b72;
+            font-weight: bold;
+        }
+
+        .seats {
+            color: #22c55e;
+            font-weight: bold;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 11px 20px;
+            background: #ed0712;
+            color: #1e1e2f;
+            text-decoration: none;
+            border-radius: 6px;
+            margin-top: 15px;
+            border: none;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .button:hover {
+            opacity: 0.85;
+        }
+
+        .back {
+            background: #374151;
+        }
+
+        .empty {
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            color: #5f6b7a;
+            text-align: center;
+        }
+
+        /* ================= RATINGS & REVIEWS ================= */
+
+        .reviews-section {
+            margin-top: 45px;
+        }
+
+        .reviews-section h2 {
+            margin-bottom: 20px;
+        }
+
+        .review-summary {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 22px 25px;
+            margin-bottom: 25px;
+        }
+
+        .review-summary .score {
+            font-size: 40px;
+            font-weight: bold;
+            color: #f5c518;
+        }
+
+        .review-summary .score-out-of {
+            color: #9ca3af;
+            font-size: 16px;
+        }
+
+        .review-summary .stars {
+            color: #f5c518;
+            font-size: 18px;
+            letter-spacing: 2px;
+        }
+
+        .review-summary .sub {
+            color: #9ca3af;
+            font-size: 13px;
+            margin-top: 4px;
+        }
+
+        .review-list {
+            display: grid;
+            gap: 16px;
+            margin-bottom: 30px;
+        }
+
+        .review-card {
+            background: #ffffff;
+            border: 1px solid #293550;
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .review-card .review-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .review-card .reviewer {
+            font-weight: bold;
+        }
+
+        .review-card .stars {
+            color: #f5c518;
+            font-size: 14px;
+        }
+
+        .review-card p {
+            color: #d1d5db;
+            margin: 0;
+            line-height: 1.5;
+            font-size: 14px;
+        }
+
+        .review-form {
+            background: #ffffff;
+            border: 1px solid #293550;
+            border-radius: 12px;
+            padding: 25px;
+        }
+
+        .review-form h3 {
+            margin-top: 0;
+            margin-bottom: 18px;
+        }
+
+        .star-select {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 18px;
+            font-size: 26px;
+        }
+
+        .star-select label {
+            cursor: pointer;
+            color: #3a3a45;
+        }
+
+        .star-select input {
+            display: none;
+        }
+
+        .star-select input:checked ~ label,
+        .star-select label:hover,
+        .star-select label:hover ~ label {
+            color: #f5c518;
+        }
+
+        .review-form textarea {
+            width: 100%;
+            min-height: 90px;
+            padding: 13px 15px;
+            box-sizing: border-box;
+            background: #ffffff;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            color: #1e1e2f;
+            outline: none;
+            font-size: 14px;
+            font-family: inherit;
+            resize: vertical;
+            margin-bottom: 16px;
+        }
+
+        .review-form textarea:focus {
+            border-color: #ed0712;
+        }
+
+        @media (max-width: 900px) {
+
+            .showtime-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+        }
+
+        @media (max-width: 600px) {
+
+            .showtime-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                padding: 20px;
+            }
+
+            .navbar {
+                padding: 20px;
+            }
+
+            .review-summary {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+
+<!-- NAVBAR -->
+
+<div th:replace="~{navbar :: navbar}"></div>
+
+
+<!-- MAIN -->
+
+<div class="container">
+
+
+    <!-- MOVIE INFORMATION -->
+
+    <div class="movie-info">
+
+        <h1 th:text="${movie.title}">
+            The Last Journey
+        </h1>
+
+        <p class="genre"
+           th:text="${movie.genre}">
+            Action â€¢ Adventure
+        </p>
+
+        <p th:text="${movie.description}">
+            An exciting action adventure movie.
+        </p>
+
+        <p class="rating-line">
+            <i class="fa-solid fa-star rating-icon" aria-hidden="true"></i> <span th:text="${movie.rating}">8.7</span> / 10
+        </p>
+
+    </div>
+
+
+    <h2><i class="fa-solid fa-ticket" aria-hidden="true"></i> Available Showtimes</h2>
+
+
+    <!-- SHOWTIMES -->
+
+    <div class="showtime-grid">
+
+        <div class="showtime-card"
+             th:each="showtime : ${showtimes}">
+
+            <h3 th:text="${showtime.theatre}">
+                SLIIT Cinema Hall
+            </h3>
+
+
+            <div class="detail">
+
+                <span class="label">
+                    Date:
+                </span>
+
+                <span th:text="${showtime.date}">
+                    2026-09-20
+                </span>
+
+            </div>
+
+
+            <div class="detail">
+
+                <span class="label">
+                    Time:
+                </span>
+
+                <span th:text="${showtime.showTime}">
+                    06:30 PM
+                </span>
+
+            </div>
+
+
+            <div class="detail">
+
+                <span class="label">
+                    Available Seats:
+                </span>
+
+                <span class="seats"
+                      th:text="${showtime.availableSeats}">
+                    150
+                </span>
+
+            </div>
+
+
+            <a th:href="@{/booking(
+                    movieId=${movie.id},
+                    showtimeId=${showtime.id},
+                    ticketPrice=${showtime.ticketPrice}
+                )}"
+               class="button">
+
+                Book Now
+
+            </a>
+
+        </div>
+
+
+        <!-- NO SHOWTIMES -->
+
+        <div class="empty"
+             th:if="${#lists.isEmpty(showtimes)}">
+
+            <h3>No Showtimes Available</h3>
+
+            <p>
+                There are currently no showtimes
+                available for this movie.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================= RATINGS & REVIEWS ================= -->
+
+    <div class="reviews-section">
+
+        <h2><i class="fa-solid fa-star rating-icon" aria-hidden="true"></i> Ratings &amp; Reviews</h2>
+
+        <div class="review-summary">
+
+            <div>
+                <span class="score" th:text="${movie.rating}">8.7</span>
+                <span class="score-out-of">/ 10</span>
+            </div>
+
+            <div>
+                <div class="stars"><i class="fa-solid fa-star rating-icon" aria-hidden="true"></i><i class="fa-solid fa-star rating-icon" aria-hidden="true"></i><i class="fa-solid fa-star rating-icon" aria-hidden="true"></i><i class="fa-solid fa-star rating-icon" aria-hidden="true"></i><i class="fa-solid fa-star rating-icon" aria-hidden="true"></i></div>
+                <div class="sub">Based on customer reviews</div>
+            </div>
+
+        </div>
+
+        <div class="review-list">
+
+            <div class="review-card">
+                <div class="review-head">
+                    <span class="reviewer">Aarushan P.</span>
+                    <span class="stars"><i class="fa-solid fa-star rating-icon" aria-hidden="true"></i><i class="fa-solid fa-star rating-icon" aria-hidden="true"></i><i class="fa-solid fa-star rating-icon" aria-hidden="true"></i><i class="fa-solid fa-star rating-icon" aria-hidden="true"></i><i class="fa-solid fa-star rating-icon" aria-hidden="true"></i></span>
+                </div>
+                <p>Great watch â€” seat booking was quick and the show started on time.</p>
+            </div>
+
+            <div class="review-card">
+                <div class="review-head">
+                    <span class="reviewer">Nila S.</span>
+                    <span class="stars"><i class="fa-solid fa-star rating-icon" aria-hidden="true"></i><i class="fa-solid fa-star rating-icon" aria-hidden="true"></i><i class="fa-solid fa-star rating-icon" aria-hidden="true"></i><i class="fa-solid fa-star rating-icon" aria-hidden="true"></i><i class="fa-regular fa-star" aria-hidden="true"></i></span>
+                </div>
+                <p>Really enjoyed the movie. Would have liked more showtime options in the evening.</p>
+            </div>
+
+        </div>
+
+        <div class="review-form">
+
+            <h3>Leave a Review</h3>
+
+            <form th:action="@{/movie-showtimes(movieId=${movie.id})}"
+                  method="get">
+
+                <div class="star-select">
+                    <input type="radio" id="star5" name="rating" value="5" checked>
+                    <label for="star5"><i class="fa-solid fa-star rating-icon" aria-hidden="true"></i></label>
+
+                    <input type="radio" id="star4" name="rating" value="4">
+                    <label for="star4"><i class="fa-solid fa-star rating-icon" aria-hidden="true"></i></label>
+
+                    <input type="radio" id="star3" name="rating" value="3">
+                    <label for="star3"><i class="fa-solid fa-star rating-icon" aria-hidden="true"></i></label>
+
+                    <input type="radio" id="star2" name="rating" value="2">
+                    <label for="star2"><i class="fa-solid fa-star rating-icon" aria-hidden="true"></i></label>
+
+                    <input type="radio" id="star1" name="rating" value="1">
+                    <label for="star1"><i class="fa-solid fa-star rating-icon" aria-hidden="true"></i></label>
+                </div>
+
+                <textarea placeholder="Share your experience with this movie..."></textarea>
+
+                <button type="submit" class="button">
+                    Submit Review
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <a href="/movies"
+       class="button back">
+
+        <i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Back to Movies
+
+    </a>
+
+</div>
+
+<div th:replace="~{footer :: footer}"></div>
+</body>
+
+</html>
+
+
+
+
+

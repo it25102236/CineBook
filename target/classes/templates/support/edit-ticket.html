@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+    <title>Edit Ticket - MovieBook</title>
+
+    <link rel="stylesheet"
+          th:href="@{/css/style.css}">
+
+    <style>
+
+        .form-page {
+            min-height: 70vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 60px 20px;
+        }
+
+        .form-card {
+            width: 100%;
+            max-width: 560px;
+            padding: 45px;
+            background: #ffffff;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 18px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.45);
+        }
+
+        .form-card h1 {
+            color: #1e1e2f;
+            font-size: 30px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .form-card p.intro {
+            color: #9999a2;
+            font-size: 14px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .banner {
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 700;
+        }
+
+        .banner-error {
+            background: rgba(237,17,28,0.12);
+            color: #dc2626;
+            border: 1px solid rgba(237,17,28,0.4);
+        }
+
+        .field {
+            margin-bottom: 20px;
+        }
+
+        .field label {
+            display: block;
+            color: #d8d8df;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .field input,
+        .field textarea {
+            width: 100%;
+            padding: 13px 15px;
+            box-sizing: border-box;
+            background: #ffffff;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            color: #1e1e2f;
+            outline: none;
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        .field textarea {
+            min-height: 130px;
+            resize: vertical;
+        }
+
+        .field input:focus,
+        .field textarea:focus {
+            border-color: #ed111c;
+        }
+
+        .field .readonly {
+            background: #f3f4f6;
+            color: #5f6b7a;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 14px;
+            margin-top: 10px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 14px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 800;
+            font-size: 14px;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: #ed111c;
+            color: #ffffff;
+        }
+
+        .btn-primary:hover {
+            background: #ff1c27;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid #35353d;
+            color: #1e1e2f;
+        }
+
+        .btn-secondary:hover {
+            border-color: #ed111c;
+            color: #ed111c;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div th:replace="~{navbar :: navbar}"></div>
+
+<section class="form-page">
+
+    <div class="form-card">
+
+        <h1>Edit Support Ticket</h1>
+
+        <p class="intro">
+            Update the details of ticket
+            <span th:text="${ticket.id}">#1</span>.
+        </p>
+
+        <div th:if="${error}"
+             class="banner banner-error"
+             th:text="${error}">Error</div>
+
+        <form th:action="@{/support/tickets/edit}"
+              th:object="${ticket}"
+              method="post">
+
+            <input type="hidden"
+                   th:field="*{id}">
+
+            <div class="field">
+                <label for="customerName">Customer Name</label>
+                <input type="text"
+                       id="customerName"
+                       th:field="*{customerName}"
+                       placeholder="Enter customer name"
+                       minlength="2"
+                       maxlength="80"
+                       required>
+            </div>
+
+            <div class="field">
+                <label for="email">Customer Email</label>
+                <input type="email"
+                       id="email"
+                       th:value="*{email}"
+                       class="readonly"
+                       readonly>
+            </div>
+
+            <div class="field">
+                <label for="subject">Subject</label>
+                <input type="text"
+                       id="subject"
+                       th:field="*{subject}"
+                       placeholder="Enter issue subject"
+                       minlength="5"
+                       maxlength="120"
+                       required>
+            </div>
+
+            <div class="field">
+                <label for="message">Message</label>
+                <textarea id="message"
+                          th:field="*{message}"
+                          placeholder="Enter customer's issue"
+                          minlength="10"
+                          maxlength="2000"
+                          required></textarea>
+            </div>
+
+            <div class="form-actions">
+                <a th:href="@{/support/tickets}" class="btn btn-secondary">Cancel</a>
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+            </div>
+
+        </form>
+
+    </div>
+
+</section>
+
+<div th:replace="~{footer :: footer}"></div>
+
+</body>
+</html>

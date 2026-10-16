@@ -1,0 +1,426 @@
+﻿<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Transactions - CineBook</title>
+    <link rel="stylesheet" href="/css/style.css">
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6fb;
+            color: #1e1e2f;
+        }
+
+        /* ================= NAVBAR ================= */
+
+        .navbar {
+            background: #ffffff;
+            padding: 18px 40px;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            border-bottom: 1px solid #293149;
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .logo span {
+            color: #e50914;
+        }
+
+        .logout {
+            color: #ff5555;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+
+        /* ================= CONTAINER ================= */
+
+        .container {
+            width: 92%;
+            max-width: 1100px;
+
+            margin: 45px auto;
+        }
+
+
+        h1 {
+            margin-bottom: 8px;
+        }
+
+
+        .subtitle {
+            color: #5f6b7a;
+
+            margin-bottom: 30px;
+        }
+
+
+        /* ================= TABLE CARD ================= */
+
+        .table-card {
+            background: #ffffff;
+
+            border: 1px solid #293149;
+
+            border-radius: 12px;
+
+            overflow: hidden;
+
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+
+        table {
+            width: 100%;
+
+            border-collapse: collapse;
+
+            min-width: 750px;
+        }
+
+
+        th {
+            background: #1d263b;
+
+            color: #ddd;
+
+            padding: 16px;
+
+            text-align: left;
+
+            font-size: 14px;
+        }
+
+
+        td {
+            padding: 15px 16px;
+
+            border-top: 1px solid #293149;
+
+            color: #ddd;
+
+            font-size: 14px;
+        }
+
+
+        tr:hover td {
+            background: #ffffff;
+        }
+
+
+        /* ================= STATUS ================= */
+
+        .status-success {
+            color: #22c55e;
+
+            font-weight: bold;
+        }
+
+
+        .status-refunded {
+            color: #f59e0b;
+
+            font-weight: bold;
+        }
+
+
+        .status-failed {
+            color: #ef4444;
+
+            font-weight: bold;
+        }
+
+
+        /* ================= EMPTY ================= */
+
+        .empty {
+            text-align: center;
+
+            padding: 45px;
+
+            color: #888;
+        }
+
+
+        /* ================= BUTTONS ================= */
+
+        .buttons {
+            display: flex;
+
+            gap: 12px;
+
+            margin-top: 25px;
+        }
+
+
+        .btn {
+            display: inline-block;
+
+            padding: 12px 20px;
+
+            border-radius: 7px;
+
+            text-decoration: none;
+
+            font-weight: bold;
+        }
+
+
+        .dashboard-btn {
+            background: #2563eb;
+
+            color: #1e1e2f;
+        }
+
+
+        .payment-btn {
+            background: #e50914;
+
+            color: #1e1e2f;
+        }
+
+
+        .refund-btn {
+            background: #293149;
+
+            color: #1e1e2f;
+        }
+
+
+        .btn:hover {
+            opacity: 0.85;
+        }
+
+
+        /* ================= MOBILE ================= */
+
+        @media (max-width: 600px) {
+
+            .navbar {
+                padding: 15px 20px;
+            }
+
+            .container {
+                width: 94%;
+
+                margin: 30px auto;
+            }
+
+            .buttons {
+                flex-direction: column;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- ================= NAVBAR ================= -->
+
+<div th:replace="~{navbar :: navbar}"></div>
+
+
+
+<!-- ================= MAIN ================= -->
+
+<div class="container">
+
+
+    <h1>
+        <i class="fa-solid fa-credit-card" aria-hidden="true"></i> Payment Transactions
+    </h1>
+
+
+    <p class="subtitle">
+
+        View all payment transactions processed by the cashier.
+
+    </p>
+
+
+
+    <!-- ================= TABLE ================= -->
+
+    <div class="table-card">
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+
+                <tr>
+
+                    <th>
+                        Payment ID
+                    </th>
+
+                    <th>
+                        Booking ID
+                    </th>
+
+                    <th>
+                        Amount
+                    </th>
+
+                    <th>
+                        Payment Method
+                    </th>
+
+                    <th>
+                        Status
+                    </th>
+
+                </tr>
+
+                </thead>
+
+
+                <tbody>
+
+
+                <!-- TRANSACTION ROWS -->
+
+                <tr th:each="payment : ${payments}">
+
+                    <td th:text="${payment.id}">
+                        1
+                    </td>
+
+
+                    <td th:text="${payment.bookingId}">
+                        1
+                    </td>
+
+
+                    <td>
+
+                        Rs.
+
+                        <span th:text="${payment.amount}">
+                            1000
+                        </span>
+
+                    </td>
+
+
+                    <td th:text="${payment.paymentMethod}">
+                        CASH
+                    </td>
+
+
+                    <td>
+
+                        <span th:if="${payment.status == 'SUCCESS'}"
+                              class="status-success"
+                              th:text="${payment.status}">
+
+                            SUCCESS
+
+                        </span>
+
+
+                        <span th:if="${payment.status == 'REFUNDED'}"
+                              class="status-refunded"
+                              th:text="${payment.status}">
+
+                            REFUNDED
+
+                        </span>
+
+
+                        <span th:if="${payment.status == 'FAILED'}"
+                              class="status-failed"
+                              th:text="${payment.status}">
+
+                            FAILED
+
+                        </span>
+
+                    </td>
+
+                </tr>
+
+
+
+                <!-- NO TRANSACTIONS -->
+
+                <tr th:if="${#lists.isEmpty(payments)}">
+
+                    <td colspan="5"
+                        class="empty">
+
+                        No payment transactions found.
+
+                    </td>
+
+                </tr>
+
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ================= BUTTONS ================= -->
+
+    <div class="buttons">
+
+        <a href="/cashier"
+           class="btn dashboard-btn">
+
+            <i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Dashboard
+
+        </a>
+
+
+    </div>
+
+
+</div>
+
+
+<div th:replace="~{footer :: footer}"></div>
+</body>
+
+</html>
+
+
+
+

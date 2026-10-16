@@ -1,0 +1,392 @@
+﻿<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>Search Booking - Cashier</title>
+    <link rel="stylesheet" href="/css/style.css">
+
+    <style>
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6fb;
+            color: #1e1e2f;
+        }
+
+        .container {
+            width: 700px;
+            max-width: 90%;
+            margin: 50px auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: #e50914;
+            margin-bottom: 30px;
+        }
+
+        .search-box {
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .search-box label {
+            display: block;
+            margin-bottom: 8px;
+            color: #ddd;
+        }
+
+        .search-box input {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 12px;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            color: #1e1e2f;
+            margin-bottom: 15px;
+        }
+
+        .search-btn {
+            width: 100%;
+            padding: 12px;
+            background: #e50914;
+            color: #1e1e2f;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .search-btn:hover {
+            opacity: 0.85;
+        }
+
+        .error {
+            background: #3a1115;
+            border: 1px solid #e50914;
+            color: #ff5555;
+            padding: 12px;
+            border-radius: 7px;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .booking-card {
+            background: #ffffff;
+            border: 1px solid #e50914;
+            border-radius: 10px;
+            padding: 25px;
+            margin-top: 25px;
+        }
+
+        .booking-card h2 {
+            color: #e50914;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .label {
+            color: #5f6b7a;
+        }
+
+        .value {
+            font-weight: bold;
+            text-align: right;
+        }
+
+        .success {
+            color: #22c55e;
+        }
+
+        .refunded {
+            color: #f59e0b;
+        }
+
+        .buttons {
+            text-align: center;
+            margin-top: 25px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 11px 18px;
+            margin: 5px;
+            background: #333;
+            color: #1e1e2f;
+            text-decoration: none;
+            border-radius: 6px;
+        }
+
+        .btn:hover {
+            background: #444;
+        }
+
+    </style>
+
+</head>
+
+<body>
+<div th:replace="~{navbar :: navbar}"></div>
+
+<div class="container">
+
+    <h1><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i> Search Booking</h1>
+
+
+    <!-- SEARCH FORM -->
+
+    <div class="search-box">
+
+        <form action="/cashier/search-booking"
+              method="get">
+
+            <label>
+                Enter Booking ID
+            </label>
+
+            <input type="number"
+                   name="bookingId"
+                   placeholder="Enter Booking ID"
+                   min="1"
+                   required>
+
+            <button type="submit"
+                    class="search-btn">
+
+                Search Booking
+
+            </button>
+
+        </form>
+
+    </div>
+
+
+    <!-- ERROR MESSAGE -->
+
+    <div th:if="${error}"
+         class="error"
+         th:text="${error}">
+    </div>
+
+
+    <!-- BOOKING DETAILS -->
+
+    <div th:if="${booking != null}"
+         class="booking-card">
+
+        <h2>Booking Details</h2>
+
+
+        <div class="row">
+
+            <span class="label">
+                Booking ID
+            </span>
+
+            <span class="value"
+                  th:text="${booking.id}">
+            </span>
+
+        </div>
+
+
+        <div class="row">
+
+            <span class="label">
+                Movie
+            </span>
+
+            <span class="value"
+                  th:text="${booking.movieTitle}">
+            </span>
+
+        </div>
+
+
+        <div class="row">
+
+            <span class="label">
+                Theatre
+            </span>
+
+            <span class="value"
+                  th:text="${booking.theatre}">
+            </span>
+
+        </div>
+
+
+        <div class="row">
+
+            <span class="label">
+                Date
+            </span>
+
+            <span class="value"
+                  th:text="${booking.date}">
+            </span>
+
+        </div>
+
+
+        <div class="row">
+
+            <span class="label">
+                Show Time
+            </span>
+
+            <span class="value"
+                  th:text="${booking.showTime}">
+            </span>
+
+        </div>
+
+
+        <div class="row">
+
+            <span class="label">
+                Seat
+            </span>
+
+            <span class="value"
+                  th:text="${booking.seatNumber}">
+            </span>
+
+        </div>
+
+
+        <div class="row">
+
+            <span class="label">
+                Price
+            </span>
+
+            <span class="value">
+
+                Rs.
+                <span th:text="${booking.price}">
+                </span>
+
+            </span>
+
+        </div>
+
+
+        <div class="row">
+
+            <span class="label">
+                Booking Status
+            </span>
+
+            <span class="value"
+                  th:classappend="${booking.status == 'PAID' ? ' success' :
+                                   booking.status == 'REFUNDED' ? ' refunded' : ''}"
+                  th:text="${booking.status}">
+            </span>
+
+        </div>
+
+
+        <!-- PAYMENT DETAILS -->
+
+        <div th:if="${payment != null}">
+
+            <div class="row">
+
+                <span class="label">
+                    Payment ID
+                </span>
+
+                <span class="value"
+                      th:text="${payment.id}">
+                </span>
+
+            </div>
+
+
+            <div class="row">
+
+                <span class="label">
+                    Payment Method
+                </span>
+
+                <span class="value"
+                      th:text="${payment.paymentMethod}">
+                </span>
+
+            </div>
+
+
+            <div class="row">
+
+                <span class="label">
+                    Payment Status
+                </span>
+
+                <span class="value"
+                      th:classappend="${payment.status == 'SUCCESS' ? ' success' :
+                                       payment.status == 'REFUNDED' ? ' refunded' : ''}"
+                      th:text="${payment.status}">
+                </span>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+    <!-- BUTTONS -->
+
+    <div class="buttons">
+
+        <a href="/cashier"
+           class="btn">
+
+            <i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Dashboard
+
+        </a>
+
+        <a href="/cashier/refund"
+           class="btn">
+
+            Refund
+
+        </a>
+
+        <a href="/cashier/transactions"
+           class="btn">
+
+            Transactions
+
+        </a>
+
+    </div>
+
+</div>
+
+<div th:replace="~{footer :: footer}"></div>
+</body>
+
+</html>
+
+
+
+

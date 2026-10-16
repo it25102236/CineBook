@@ -1,0 +1,354 @@
+﻿<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>Movie Management - Admin</title>
+    <link rel="stylesheet" href="/css/style.css">
+
+    <style>
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6fb;
+            color: #1e1e2f;
+        }
+
+        .container {
+            width: 1100px;
+            max-width: 95%;
+            margin: 40px auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: #e50914;
+            margin-bottom: 30px;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 11px 18px;
+            border-radius: 6px;
+            text-decoration: none;
+            color: #1e1e2f;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .add-btn {
+            background: #16a34a;
+        }
+
+        .back-btn {
+            background: #333;
+        }
+
+        .edit-btn {
+            background: #ed0712;
+        }
+
+        .delete-btn {
+            background: #dc2626;
+        }
+
+        .btn:hover {
+            opacity: 0.85;
+        }
+
+        .message {
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .success {
+            background: #14532d;
+            color: #86efac;
+        }
+
+        .error {
+            background: #7f1d1d;
+            color: #fca5a5;
+        }
+
+        .table-box {
+            background: #ffffff;
+            border-radius: 10px;
+            overflow-x: auto;
+            border: 1px solid #e2e8f0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #222;
+            color: #e50914;
+            padding: 15px;
+            text-align: left;
+        }
+
+        td {
+            padding: 14px;
+            border-top: 1px solid #e2e8f0;
+            vertical-align: middle;
+        }
+
+        .poster {
+            width: 60px;
+            height: 85px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+
+        .description {
+            max-width: 250px;
+            color: #5f6b7a;
+        }
+
+        .actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .actions form {
+            display: inline;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 30px;
+            color: #5f6b7a;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 25px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+<div th:replace="~{navbar :: navbar}"></div>
+
+<div class="container">
+
+    <h1><i class="fa-solid fa-film" aria-hidden="true"></i> Movie Management</h1>
+
+
+    <!-- TOP BAR -->
+
+    <div class="top-bar">
+
+        <a href="/admin/movies/add"
+           class="btn add-btn">
+
+            + Add New Movie
+
+        </a>
+
+        <a href="/admin"
+           class="btn back-btn">
+
+            <i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Admin Dashboard
+
+        </a>
+
+    </div>
+
+
+    <!-- SUCCESS MESSAGE -->
+
+    <div th:if="${success}"
+         class="message success"
+         th:text="${success}">
+
+    </div>
+
+
+    <!-- ERROR MESSAGE -->
+
+    <div th:if="${error}"
+         class="message error"
+         th:text="${error}">
+
+    </div>
+
+
+    <!-- MOVIE TABLE -->
+
+    <div class="table-box">
+
+        <table>
+
+            <thead>
+
+            <tr>
+
+                <th>ID</th>
+
+                <th>Poster</th>
+
+                <th>Title</th>
+
+                <th>Genre</th>
+
+                <th>Description</th>
+
+                <th>Rating</th>
+
+                <th>Action</th>
+
+            </tr>
+
+            </thead>
+
+
+            <tbody>
+
+            <tr th:each="movie : ${movies}">
+
+                <!-- ID -->
+
+                <td th:text="${movie.id}"></td>
+
+
+                <!-- POSTER -->
+
+                <td>
+
+                    <img th:if="${movie.posterUrl != null and !movie.posterUrl.isEmpty()}"
+                        class="poster"
+                        th:src="${movie.posterUrl.startsWith('http://') or movie.posterUrl.startsWith('https://') or movie.posterUrl.startsWith('/') ? movie.posterUrl : '/images/' + movie.posterUrl}"
+                        th:alt="${movie.title}">
+                    <span th:unless="${movie.posterUrl != null and !movie.posterUrl.isEmpty()}"
+                         class="poster poster-placeholder-small"
+                         aria-label="No poster available">MOVIE</span>
+
+                </td>
+
+
+                <!-- TITLE -->
+
+                <td th:text="${movie.title}"></td>
+
+
+                <!-- GENRE -->
+
+                <td th:text="${movie.genre}"></td>
+
+
+                <!-- DESCRIPTION -->
+
+                <td class="description"
+                    th:text="${movie.description}">
+
+                </td>
+
+
+                <!-- RATING -->
+
+                <td th:text="${movie.rating}"></td>
+
+
+                <!-- ACTION -->
+
+                <td>
+
+                    <div class="actions">
+
+                        <!-- EDIT -->
+
+                        <a th:href="@{/admin/movies/edit(id=${movie.id})}"
+                           class="btn edit-btn">
+
+                            Edit
+
+                        </a>
+
+
+                        <!-- DELETE -->
+
+                        <form action="/admin/movies/delete"
+                              method="post"
+                              onsubmit="return confirm('Are you sure you want to delete this movie?');">
+
+                            <input type="hidden"
+                                   name="id"
+                                   th:value="${movie.id}">
+
+                            <button type="submit"
+                                    class="btn delete-btn">
+
+                                Delete
+
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                </td>
+
+            </tr>
+
+
+            <!-- NO MOVIES -->
+
+            <tr th:if="${#lists.isEmpty(movies)}">
+
+                <td colspan="7"
+                    class="empty">
+
+                    No movies available.
+
+                </td>
+
+            </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+    <div class="footer">
+
+        <a href="/"
+           class="btn back-btn">
+
+            <i class="fa-solid fa-house" aria-hidden="true"></i> Home
+
+        </a>
+
+    </div>
+
+</div>
+
+<div th:replace="~{footer :: footer}"></div>
+</body>
+
+</html>
+
+
+
+

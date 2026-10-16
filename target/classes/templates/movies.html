@@ -1,0 +1,280 @@
+﻿<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Movies - CineBook</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+
+        /* ================= MOVIE SEARCH BAR ================= */
+
+        .movie-search {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 28px;
+        }
+
+        .movie-search input[type="text"] {
+            flex: 1 1 320px;
+            min-width: 0;
+            max-width: 460px;
+            padding: 13px 16px;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+            background: #ffffff;
+            color: #1e1e2f;
+            font-size: 15px;
+            outline: none;
+            transition: 0.2s;
+        }
+
+        .movie-search input[type="text"]::placeholder {
+            color: #94a3b8;
+        }
+
+        .movie-search input[type="text"]:focus {
+            border-color: #6c5ce7;
+            box-shadow: 0 0 8px rgba(108, 92, 231, 0.25);
+        }
+
+        .movie-search button {
+            padding: 13px 24px;
+            border-radius: 10px;
+            border: none;
+            background: #6c5ce7;
+            color: #ffffff;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .movie-search button:hover {
+            opacity: 0.9;
+        }
+
+        .movie-search select {
+            min-width: 160px;
+            padding: 13px 14px;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            background: #ffffff;
+            color: #1e1e2f;
+            font-size: 15px;
+        }
+
+        .movie-search .clear-search {
+            padding: 13px 18px;
+            background: transparent;
+            border: 1px solid #e2e8f0;
+            color: #5f6b7a;
+            text-decoration: none;
+            font-weight: normal;
+        }
+
+        .movie-search .clear-search:hover {
+            background: #f1f5f9;
+            color: #1e1e2f;
+            opacity: 1;
+        }
+
+        .search-summary {
+            text-align: center;
+            color: #5f6b7a;
+            font-size: 14px;
+            margin-bottom: 22px;
+        }
+
+        .search-summary strong {
+            color: #1e1e2f;
+        }
+
+        .no-movies h2 {
+            margin-bottom: 8px;
+        }
+
+        .no-movies .search-tip {
+            color: #5f6b7a;
+            font-size: 14px;
+        }
+
+    </style>
+</head>
+<body>
+
+
+<div th:replace="~{navbar :: navbar}"></div>
+
+<!-- ====== MOVIES PAGE ======= -->
+<section class="movies-page">
+    <!-- Page Header -->
+    <div class="movies-header">
+        <div>
+            <span class="section-label">
+                EXPLORE
+            </span>
+            <h1>
+                Now Showing
+            </h1>
+            <p>
+                Discover the latest movies and book your favourite seats.
+            </p>
+        </div>
+
+        <div class="movies-count">
+            <span th:text="${movies.size()}">
+                0
+            </span>
+            Movies
+        </div>
+
+    </div>
+
+    <!-- ========== SEARCH BAR ========== -->
+
+    <form class="movie-search"
+          th:action="@{/movies}"
+          method="get">
+
+        <input type="text"
+               name="search"
+               id="movieSearch"
+               th:value="${search}"
+               maxlength="100"
+               placeholder="Search movies by title..."
+               autocomplete="off"
+               aria-label="Search movies by title">
+
+        <select name="genre" id="movieGenre" aria-label="Filter by genre">
+            <option value="">All genres</option>
+            <option th:each="option : ${genres}"
+                    th:value="${option}"
+                    th:text="${option}"
+                    th:selected="${genre == option}">
+            </option>
+        </select>
+
+        <select name="availability" id="movieAvailability"
+                aria-label="Filter by showtime availability">
+            <option value="any" th:selected="${availability == 'any'}">Any availability</option>
+            <option value="available" th:selected="${availability == 'available'}">Available showtimes</option>
+            <option value="unavailable" th:selected="${availability == 'unavailable'}">No available showtimes</option>
+        </select>
+
+        <button type="submit">
+            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+            Apply
+        </button>
+
+        <a th:if="${!search.isEmpty() or !genre.isEmpty() or availability != 'any'}"
+           th:href="@{/movies}"
+           class="clear-search">
+            Clear filters
+        </a>
+
+    </form>
+
+
+    <!-- ========== ACTIVE SEARCH SUMMARY ========== -->
+
+    <div class="search-summary"
+         th:if="${!search.isEmpty() or !genre.isEmpty() or availability != 'any'}">
+
+        <span>
+            <span th:text="${movies.size()}">0</span>
+            matching movie(s)
+        </span>
+
+        <strong th:if="${!search.isEmpty()}"
+                th:text="'&quot;' + ${search} + '&quot;'">"search"</strong>
+
+    </div>
+
+
+    <!-- ========== MOVIE GRID ========== -->
+    <div class="movie-grid">
+        <!-- Dynamic Movie Card -->
+        <div class="movie-card"
+             th:each="movie : ${movies}">
+
+            <!-- Poster -->
+            <div class="movie-poster">
+
+                <!-- If poster URL exists -->
+                <img th:if="${movie.posterUrl != null and !movie.posterUrl.isEmpty()}"
+                     th:src="${movie.posterUrl.startsWith('http://') or movie.posterUrl.startsWith('https://') or movie.posterUrl.startsWith('/') ? movie.posterUrl : '/images/' + movie.posterUrl}"
+                     th:alt="${movie.title}">
+
+                <!-- If no poster URL -->
+                <div th:unless="${movie.posterUrl != null and !movie.posterUrl.isEmpty()}"
+                     class="poster-placeholder">
+
+                    <span>MOVIE</span>
+
+                </div>
+                <span class="movie-badge">
+                    NOW SHOWING
+                </span>
+
+            </div>
+
+            <!-- Movie Information -->
+            <div class="movie-info">
+
+                <h3 th:text="${movie.title}">
+                    Movie Title
+                </h3>
+
+                <p th:text="${movie.genre}">
+                    Action â€¢ Adventure
+                </p>
+                <!-- Bottom -->
+                <div class="movie-bottom">
+
+                    <span class="movie-rating">
+                        <i class="fa-solid fa-star rating-icon" aria-hidden="true"></i>
+                        <span th:text="${movie.rating}">
+                            8.7
+                        </span>
+                    </span>
+
+                    <a th:href="@{/movie-showtimes(movieId=${movie.id})}"
+                       class="book-now">
+                        View Details
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- ======= NO MOVIES ======= -->
+    <div class="no-movies"
+         th:if="${#lists.isEmpty(movies)}">
+        <h2 th:text="${!search.isEmpty() or !genre.isEmpty() or availability != 'any'} ? 'No Movies Found' : 'No Movies Available'">No Movies Available</h2>
+        <p th:if="${!search.isEmpty() or !genre.isEmpty() or availability != 'any'}"
+           class="search-tip">
+            No movies matched these filters. Try different options or
+            <a th:href="@{/movies}">clear all filters</a>.
+        </p>
+        <p th:unless="${!search.isEmpty() or !genre.isEmpty() or availability != 'any'}">
+            There are currently no movies available.
+        </p>
+    </div>
+</section>
+
+<!-- ======== FOOTER ========= -->
+<div th:replace="~{footer :: footer}"></div>
+</body>
+</html>
+
+

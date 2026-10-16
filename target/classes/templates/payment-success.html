@@ -1,0 +1,200 @@
+﻿<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Payment Successfully - CineBook</title>
+
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+
+    <style>
+        .success-page {
+            max-width: 650px;
+            margin: 80px auto;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .success-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 15px;
+            padding: 40px;
+        }
+
+        .success-icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+        }
+
+        .success-card h1 {
+            color: #22c55e;
+            margin-bottom: 15px;
+        }
+
+        .success-card p {
+            color: #5f6b7a;
+            margin-bottom: 25px;
+        }
+
+        .booking-details {
+            background: #ffffff;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: left;
+            margin-bottom: 25px;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-row span {
+            color: #5f6b7a;
+        }
+
+        .detail-row strong {
+            color: #1e1e2f;
+        }
+
+        .success-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .success-buttons a {
+            text-decoration: none;
+            padding: 13px 22px;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        .home-button {
+            background: #e50914;
+            color: #1e1e2f;
+        }
+
+        .bookings-button {
+            background: #333;
+            color: #1e1e2f;
+        }
+    </style>
+</head>
+
+<body>
+
+<div th:replace="~{navbar :: navbar}"></div>
+
+
+<section class="success-page">
+
+    <div class="success-card">
+
+        <div class="success-icon">
+            <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
+        </div>
+
+        <h1>Payment Successfully</h1>
+
+
+        <div class="booking-details">
+
+            <div class="detail-row">
+                <span>Booking ID</span>
+                <strong th:text="${booking.id}">1</strong>
+            </div>
+
+            <div class="detail-row">
+                <span>Movie</span>
+                <strong th:text="${booking.movieTitle}">
+                    Sarthar
+                </strong>
+            </div>
+
+            <div class="detail-row">
+                <span>Theatre</span>
+                <strong th:text="${booking.theatre}">
+                    SLIIT Cinema Hall
+                </strong>
+            </div>
+
+            <div class="detail-row">
+                <span>Date</span>
+                <strong th:text="${booking.date}">
+                    2026-09-20
+                </strong>
+            </div>
+
+            <div class="detail-row">
+                <span>Show Time</span>
+                <strong th:text="${booking.showTime}">
+                    06:30 PM
+                </strong>
+            </div>
+
+            <div class="detail-row">
+                <span>Seat</span>
+                <strong th:text="${booking.seatNumber}">
+                    A1
+                </strong>
+            </div>
+
+            <div class="detail-row">
+                <span>Payment Method</span>
+                <strong th:text="${payment.paymentMethod}">
+                    CARD
+                </strong>
+            </div>
+
+            <div class="detail-row">
+                <span>Simulated Amount</span>
+                <strong>
+                    LKR
+                    <span th:text="${payment.amount}">
+                        1000
+                    </span>
+                </strong>
+            </div>
+
+            <div class="detail-row">
+                <span>Payment Status</span>
+                <strong th:text="${payment.status}">
+                    SIMULATED
+                </strong>
+            </div>
+
+        </div>
+
+
+        <div class="success-buttons">
+
+            <a href="/" class="home-button">
+                Back to Home
+            </a>
+
+            <a href="/my-bookings" class="bookings-button">
+                My Bookings
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<div th:replace="~{footer :: footer}"></div>
+
+</body>
+</html>
+

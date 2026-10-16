@@ -1,0 +1,228 @@
+﻿<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Add Promotion - MovieBook</title>
+
+    <link rel="stylesheet"
+          th:href="@{/css/style.css}">
+
+    <style>
+
+        .form-page {
+            min-height: 70vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 60px 20px;
+        }
+
+        .form-card {
+            width: 100%;
+            max-width: 560px;
+            padding: 40px;
+            background: #ffffff;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 18px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.45);
+        }
+
+         .form-card h1 {
+             margin-bottom: 8px;
+         }
+
+         .form-card .subtitle {
+             color: #9999a2;
+             font-size: 14px;
+             margin-bottom: 28px;
+         }
+
+         .error-message {
+             background: rgba(237, 17, 28, 0.1);
+             border: 1px solid #ed111c;
+             color: #ed111c;
+             padding: 12px;
+             border-radius: 6px;
+             margin-bottom: 20px;
+             font-size: 14px;
+         }
+
+        .field {
+            margin-bottom: 20px;
+        }
+
+        .field label {
+            display: block;
+            color: #d8d8df;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .field input,
+        .field select,
+        .field textarea {
+            width: 100%;
+            padding: 13px 15px;
+            box-sizing: border-box;
+            background: #ffffff;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            color: #1e1e2f;
+            outline: none;
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        .field textarea {
+            min-height: 90px;
+            resize: vertical;
+        }
+
+        .field input:focus,
+        .field select:focus,
+        .field textarea:focus {
+            border-color: #ed111c;
+        }
+
+        .field-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 14px;
+            margin-top: 10px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 14px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 800;
+            font-size: 14px;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: #ed111c;
+            color: #1e1e2f;
+        }
+
+        .btn-primary:hover {
+            background: #ff1c27;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid #35353d;
+            color: #1e1e2f;
+        }
+
+        .btn-secondary:hover {
+            border-color: #ed111c;
+            color: #ed111c;
+        }
+
+        @media (max-width: 600px) {
+            .field-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div th:replace="~{navbar :: navbar}"></div>
+
+<section class="form-page">
+
+     <div class="form-card">
+
+         <h1>Add Promotion</h1>
+         <p class="subtitle">Create a new promotional offer or discount.</p>
+         <div th:if="${error}" th:text="${error}" class="error-message"></div>
+
+         <form th:action="@{/marketing/promotions/add}"
+               th:object="${promotion}"
+               method="post">
+
+            <div class="field">
+                <label for="title">Title</label>
+                <input type="text"
+                       id="title"
+                       th:field="*{title}"
+                       placeholder="e.g. Weekend Movie Offer"
+                       required>
+            </div>
+
+            <div class="field">
+                <label for="description">Description</label>
+                <textarea id="description"
+                          th:field="*{description}"
+                          placeholder="Describe the offer"
+                          required></textarea>
+            </div>
+
+            <div class="field-row">
+
+                <div class="field">
+                    <label for="startDate">Start Date</label>
+                    <input type="date"
+                           id="startDate"
+                           th:field="*{startDate}"
+                           required>
+                </div>
+
+                <div class="field">
+                    <label for="endDate">End Date</label>
+                    <input type="date"
+                           id="endDate"
+                           th:field="*{endDate}"
+                           required>
+                </div>
+
+            </div>
+
+            <div class="field">
+                <label for="status">Status</label>
+                <select id="status" th:field="*{status}" required>
+                    <option value="ACTIVE">Active</option>
+                    <option value="INACTIVE">Inactive</option>
+                </select>
+            </div>
+
+            <div class="form-actions">
+                <a href="/marketing/promotions" class="btn btn-secondary">Cancel</a>
+                <button type="submit" class="btn btn-primary">Save Promotion</button>
+            </div>
+
+        </form>
+
+    </div>
+
+</section>
+
+<div th:replace="~{footer :: footer}"></div>
+
+</body>
+</html>
+
+
+
+
