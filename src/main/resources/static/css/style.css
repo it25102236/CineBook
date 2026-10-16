@@ -1033,9 +1033,7 @@ table td {
     border-color: var(--cine-border) !important;
 }
 
-table tr:hover td {
-    background: rgba(116, 185, 255, 0.12) !important;
-}
+
 
 .booking-form {
     display: grid;

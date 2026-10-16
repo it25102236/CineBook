@@ -189,6 +189,10 @@
                 Ticket Price
             </th>
 
+            <th>
+                Actions
+            </th>
+
         </tr>
 
         </thead>
@@ -265,7 +269,20 @@
 
             </td>
 
-
+            <td>
+                <div class="actions">
+                    <a class="button edit"
+                       th:href="@{/theatre-manager/showtimes/edit(id=${showtime.id})}">
+                        Edit
+                    </a>
+                    <form th:action="@{/theatre-manager/showtimes/delete}"
+                          method="post"
+                          onsubmit="return confirm('Are you sure you want to delete this showtime?');">
+                        <input type="hidden" name="id" th:value="${showtime.id}">
+                        <button type="submit" class="button delete">Delete</button>
+                    </form>
+                </div>
+            </td>
 
 
         </tr>
@@ -275,7 +292,7 @@
 
         <tr th:if="${#lists.isEmpty(showtimes)}">
 
-            <td colspan="9"
+            <td colspan="10"
                 class="empty">
 
                 No showtimes available.
@@ -310,7 +327,6 @@
 </body>
 
 </html>
-
 
 
 
